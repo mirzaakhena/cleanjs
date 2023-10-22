@@ -1,0 +1,54 @@
+Pertama tulis dulu semua usecase yang kira2 mau dibuat di notepad
+
+jangan mulai dari database. karena database HANYA media menyimpan data saja bukan logic.
+dan database itu akan mengikuti model yang kita buat
+
+Model
+
+  hal Pertama yang perlu kita lakukan adalah men-define struktur data model
+
+  ada value object yang namanya selalu berakhiran ID misal TenantID
+
+  biasanya dipakai untuk menjadi ID utk object tersebut
+
+  misal kita punya object Tenant maka kita pasti akan memiliki namanya TenantID
+
+  ada data transaksi dan ada data master
+
+  utk data master, kita bisa memberikan optional untuk seluruh tipe datanya kecuali id nya
+
+  ada tanggal
+  ada status
+  ada user
+  ada lokasi
+  ada enum dalam bentuk type
+
+  lalu kita buatkan Repo Functionnya 
+
+  biasanya diawali dengan kata
+
+  Save, FindMany dan Delete
+
+  Save selalu 
+    menerima object
+    mereturn ID 
+
+  Delete selalu 
+    menerima ID
+    mereturn void
+
+  FindMany 
+    menerima filter
+    selalu mereturn tuple array dan number
+
+Usecase
+
+  selesaikan usecase yang menjadi core of application terlebih dahulu
+
+  saat membuat usecase, usahakan berpikir untuk fokus pada tujuan utama validasi itu di akhir
+  misal tujuannya adalah membuat struk. maka save dulu struk tersebut,
+  andaikan perlu validasi itu nanti diakhir saja. validasi bisa dijadikan TODO
+
+  misal tujuan utk bikin getall object maka InportRequest bisa langsung menggunakan Filter pada FindMany
+
+
