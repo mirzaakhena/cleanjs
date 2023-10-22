@@ -37,7 +37,7 @@ export const handleRecording = (
 ) => {
   //
 
-  router.get("/recording/status", async (req, res) => {
+  router.get("/status", async (req, res) => {
     //
     res.json({
       status: recordingState.enabled,
@@ -46,33 +46,7 @@ export const handleRecording = (
     //
   });
 
-  // router.get("/recording/status/enabled", async (req, res) => {
-  //   //
-
-  //   try {
-  //     recordingState.enabled = true;
-
-  //     res.json({ message: `recording state is changed to enabled` });
-  //   } catch (err) {
-  //     res.status(400).json({ message: (err as Error).message });
-  //   }
-  //   //
-  // });
-
-  // router.get("/recording/status/disabled", async (req, res) => {
-  //   //
-
-  //   try {
-  //     recordingState.enabled = false;
-
-  //     res.json({ message: `recording state is changed to disabled` });
-  //   } catch (err) {
-  //     res.status(400).json({ message: (err as Error).message });
-  //   }
-  //   //
-  // });
-
-  router.post("/recording/status/:status", async (req, res) => {
+  router.post("/status/:status", async (req, res) => {
     //
 
     const status = req.params.status;
@@ -96,7 +70,7 @@ export const handleRecording = (
     //
   });
 
-  router.get("/recording/record", async (req, res) => {
+  router.get("/record", async (req, res) => {
     //
 
     const ctx = getContext("");
@@ -116,7 +90,7 @@ export const handleRecording = (
     res.json({ items, count });
   });
 
-  router.get("/recording/record/:recordId", async (req, res) => {
+  router.get("/record/:recordId", async (req, res) => {
     //
 
     const ctx = getContext("");
@@ -131,7 +105,7 @@ export const handleRecording = (
     //
   });
 
-  router.get("/recording/record/:recordId/download", async (req, res) => {
+  router.get("/record/:recordId/download", async (req, res) => {
     //
 
     const ctx = getContext("");
@@ -159,7 +133,7 @@ export const handleRecording = (
     //
   });
 
-  router.delete("/recording/record", async (req, res) => {
+  router.delete("/record", async (req, res) => {
     //
 
     const ctx = getContext("");
@@ -168,7 +142,7 @@ export const handleRecording = (
     res.json({ message: "all recording is deleted" });
   });
 
-  router.delete("/recording/record/:recordId", async (req, res) => {
+  router.delete("/record/:recordId", async (req, res) => {
     //
 
     const recordId = req.params.recordId;
@@ -182,7 +156,7 @@ export const handleRecording = (
     }
   });
 
-  router.post("/recording/record/:recordId/clone", async (req, res) => {
+  router.post("/record/:recordId/clone", async (req, res) => {
     //
 
     const recordId = req.params.recordId;
@@ -228,7 +202,7 @@ export const handleRecording = (
     }
   });
 
-  router.put("/recording/record/:recordId", async (req, res) => {
+  router.put("/record/:recordId", async (req, res) => {
     //
     const recordId = req.params.recordId;
     const description = req.body.description;
@@ -258,7 +232,7 @@ export const handleRecording = (
     }
   });
 
-  router.post("/recording/record/:recordId/replay", async (req, res) => {
+  router.post("/record/:recordId/replay", async (req, res) => {
     //
 
     const recordId = req.params.recordId;
@@ -292,7 +266,7 @@ export const handleRecording = (
     }
   });
 
-  router.post("/recording/record/:recordId/test", async (req, res) => {
+  router.post("/record/:recordId/test", async (req, res) => {
     //
 
     const recordId = req.params.recordId;
@@ -350,7 +324,7 @@ export const handleRecording = (
     }
   });
 
-  router.post("/recording/journey", async (req, res) => {
+  router.post("/journey", async (req, res) => {
     //
     try {
       const ctx = getContext("");
@@ -388,7 +362,7 @@ export const handleRecording = (
     }
   });
 
-  router.get("/recording/journey", async (req, res) => {
+  router.get("/journey", async (req, res) => {
     //
 
     const ctx = getContext("");
@@ -401,7 +375,7 @@ export const handleRecording = (
     res.json({ items, count });
   });
 
-  router.get("/recording/journey/:journeyId", async (req, res) => {
+  router.get("/journey/:journeyId", async (req, res) => {
     //
 
     const [result, count] = await repos.findAllRecordingJourney(getContext(""), {
@@ -415,7 +389,7 @@ export const handleRecording = (
     res.json(result[0]);
   });
 
-  router.put("/recording/journey/:journeyId", async (req, res) => {
+  router.put("/journey/:journeyId", async (req, res) => {
     //
 
     try {
@@ -463,7 +437,7 @@ export const handleRecording = (
     }
   });
 
-  router.delete("/recording/journey/:journeyId", async (req, res) => {
+  router.delete("/journey/:journeyId", async (req, res) => {
     //
     const ctx = getContext("");
     await repos.deleteSomeRecordingJourney(ctx, req.params.journeyId);
@@ -473,7 +447,7 @@ export const handleRecording = (
     });
   });
 
-  router.post("/recording/journey/:journeyId/replay", async (req, res) => {
+  router.post("/journey/:journeyId/replay", async (req, res) => {
     const ctx = getContext("");
 
     const journeyId = req.params.journeyId;

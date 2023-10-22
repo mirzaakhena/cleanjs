@@ -170,42 +170,37 @@ function extractRoute(input: HTTPData, openApiObj: OpenAPIObject): ParameterObje
   return params;
 }
 
-export function handleRequestBody(input: HTTPData, openApiObj: OpenAPIObject): RequestBodyObject | undefined {
-  //
-
-  if (!input.body) {
-    return undefined;
-  }
-
+function handleProperties(input: Record<string, QueryType>) {
   let schemaObj: Record<string, SchemaObject> = {};
 
-  for (const key in input.body) {
-    for (const key in input.body) {
-      const field = input.body[key];
+  for (const key in input) {
+    const field = input[key];
 
+    if (field.type === "object" && field.properties) {
       schemaObj = {
         ...schemaObj,
         [key]: {
-          type: field.type === "number" ? "integer" : field.type,
+          type: field.type,
           default: field.default,
           description: field.description,
+          properties: handleProperties(field.properties),
         } as SchemaObject,
       };
+
+      continue;
     }
+
+    schemaObj = {
+      ...schemaObj,
+      [key]: {
+        type: field.type === "number" ? "integer" : field.type,
+        default: field.default,
+        description: field.description,
+      } as SchemaObject,
+    };
   }
 
-  const req: RequestBodyObject = {
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: schemaObj,
-        },
-      },
-    },
-  };
-
-  return req;
+  return schemaObj;
 }
 
 export function controllerToSwagger(input: HTTPData, openApiObj: OpenAPIObject) {
@@ -230,7 +225,16 @@ export function controllerToSwagger(input: HTTPData, openApiObj: OpenAPIObject) 
         description: input.usecase,
         operationId: input.usecase,
         parameters: extractRoute(input, openApiObj),
-        requestBody: handleRequestBody(input, openApiObj),
+        requestBody: input.body && {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: handleProperties(input.body),
+              },
+            },
+          },
+        },
         responses: {},
       } as OperationObject,
     } as PathItemObject,

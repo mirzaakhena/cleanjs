@@ -19,7 +19,23 @@ export const controllerStruk: HTTPData[] = [
     body: {
       billNumber: { type: "string", default: "BILL-123-456" }, // TODO remove default later
       totalTransaksi: { type: "number", default: 50000 }, // TODO remove default later
-      screenshot: { type: "object", default: { id: "IMAGE_ID", name: "IMAGE_NAME", url: "IMAGE_URL" } },
+      screenshot: {
+        type: "object",
+        properties: {
+          id: {
+            type: "string",
+            default: "IMAGE_ID",
+          },
+          name: {
+            type: "string",
+            default: "IMAGE_NAME",
+          },
+          url: {
+            type: "string",
+            default: "IMAGE_URL",
+          },
+        },
+      },
     },
     header: {
       userID: { type: "string" },

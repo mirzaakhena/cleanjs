@@ -48,6 +48,10 @@ export const strukApproval: Usecase<Outport, InportRequest, InportResponse> = {
         throw new Error("struk not found");
       }
 
+      if (["APPROVED", "REJECTED"].some((x) => objUS.status === x)) {
+        throw new Error(`struk has been ${objUS.status} before`);
+      }
+
       // ubah status Struk
       const status = objUS.updateStatus!(req.now, req.adminID, req.approvalStatus);
       await o.saveStruk(ctx, objUS);

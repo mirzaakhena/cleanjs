@@ -1,9 +1,6 @@
 // https://editor-next.swagger.io/
 // https://spec.openapis.org/oas/v3.1.0
 
-import { METHODS } from "http";
-import { Methods } from "../../framework/controller_express.js";
-
 export type SchemaObject = {
   title?: string;
   multipleOf?: number;
@@ -166,7 +163,7 @@ export type OpenAPIObject = {
   components?: ComponentObject;
 };
 
-export interface PathItemObject {
+export type PathItemObject = {
   $ref?: string;
   summary?: string;
   description?: string;
@@ -180,4 +177,4 @@ export interface PathItemObject {
   trace?: OperationObject | ReferenceObject;
   servers?: ServerObject[];
   parameters?: (ParameterObject | ReferenceObject)[];
-}
+};

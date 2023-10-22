@@ -12,8 +12,10 @@ import { recordingInit, recordingMiddleware } from "./plugin/recording/recording
 import { gateways } from "./app/gateway/_gateway.js";
 import { usecases } from "./app/usecases/_usecase.js";
 import { handleError, handleUser } from "./app/controller/_middleware.js";
-import { swagger } from "./plugin/swagger/middleware.js";
+import { controllerToOpenAPI } from "./plugin/swagger/middleware_swagger-ui.js";
 import { fileURLToPath } from "url";
+import swaggerUi from "swagger-ui-express";
+import { redocly } from "./plugin/swagger/middleware_redocly.js";
 
 export const main = async () => {
   //
@@ -61,6 +63,7 @@ export const main = async () => {
     app.use(handleUser());
     app.use(mainRouter);
 
+    // recording_ui
     {
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = path.dirname(__filename);
@@ -68,15 +71,19 @@ export const main = async () => {
 
       isDevMode && app.use("/recording", recordingInit(recordingRouter, ds, usecaseWithGatewayInstance));
 
-      app.get("/myapp", (req, res) => res.sendFile(path.join(distPath, "index.html")));
+      app.get("/recording/ui", (req, res) => res.sendFile(path.join(distPath, "index.html")));
       app.use("/assets", express.static(path.join(distPath, "assets")));
     }
 
     app.use(handleError());
 
-    isDevMode && app.use("/api-docs", ...swagger(controllerCollection));
+    const openApiObj = controllerToOpenAPI(controllerCollection);
+    isDevMode && app.use("/openapi", (req, res) => res.json(openApiObj));
+    isDevMode && app.use("/swagger", swaggerUi.serve, swaggerUi.setup(openApiObj));
 
     printRouteToConsole("", mainRouter);
+    console.log("swagger url", "http://localhost:3000/swagger");
+    console.log("opnapi url ", "http://localhost:3000/openapi");
 
     await ds.initialize();
 
