@@ -72,7 +72,7 @@ export const userRewardApproval: Usecase<Outport, InportRequest, InportResponse>
 
       // catat user point yang berkurang
       {
-        const objUP: UserPoint = new UserPoint();
+        const objUP = new UserPoint();
         {
           //
           objUP.id = req.newUserPointID;

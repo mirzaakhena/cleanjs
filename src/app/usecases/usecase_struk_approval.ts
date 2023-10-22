@@ -62,14 +62,15 @@ export const strukApproval: Usecase<Outport, InportRequest, InportResponse> = {
 
       // tambahkan user point
       {
-        const objUP: UserPoint = {
+        const objUP = new UserPoint();
+        {
           //
-          id: req.newUserPointID,
-          user: objUS.user,
-          createdDate: req.now,
+          objUP.id = req.newUserPointID;
+          objUP.user = objUS.user;
+          objUP.createdDate = req.now;
           // tenant: objUS.tenant,
-          point,
-        };
+          objUP.point = point;
+        }
         await o.saveUserPoint(ctx, objUP);
       }
 

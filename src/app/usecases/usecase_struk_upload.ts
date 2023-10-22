@@ -39,7 +39,7 @@ export const strukUpload: Usecase<Outport, InportRequest, InportResponse> = {
       // TODO validasi req.tenantID
       // TODO create service for creating struk
 
-      const obj: Struk = new Struk();
+      const obj = new Struk();
       {
         obj.id = req.newStrukID;
         obj.createdDate = req.now;

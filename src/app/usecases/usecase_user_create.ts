@@ -27,12 +27,13 @@ export const userCreate: Usecase<Outport, InportRequest, InportResponse> = {
     return async (ctx, req) => {
       //
 
-      const obj: User = {
-        id: req.newUserID,
-        createdDate: req.now,
-        name: req.name,
-        totalPoints: 1000,
-      };
+      const obj = new User();
+      {
+        obj.id = req.newUserID;
+        obj.createdDate = req.now;
+        obj.name = req.name;
+        obj.totalPoints = 1000;
+      }
 
       await o.saveUser(ctx, obj);
 

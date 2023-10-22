@@ -6,20 +6,20 @@ import { UserPoint as IUserPoint } from "../model/user_point.js";
 import { User } from "./gateway_user.js";
 
 @Entity()
-export class UserPoint implements IUserPoint {
+export class UserPoint extends IUserPoint {
   //
   @PrimaryColumn({ type: "varchar", length: 20 })
-  id: string;
+  declare id: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: "userID" })
-  user: IUser;
+  declare user: IUser;
 
   @Column({ type: "int" })
-  point: number;
+  declare point: number;
 
   @Column({ type: "timestamp", nullable: true })
-  createdDate: Date;
+  declare createdDate: Date;
 }
 
 // export const saveUserPoint = (ds: DataSource): SaveEntity<UserPoint, UserPointID> => {
