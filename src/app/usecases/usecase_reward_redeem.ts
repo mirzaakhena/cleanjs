@@ -41,7 +41,7 @@ export const rewardRedeem: Usecase<Outport, InportRequest, InportResponse> = {
 
       // tambahkan user reward
       {
-        const objUP: UserReward = new UserReward();
+        const objUP = new UserReward();
         {
           //
           objUP.id = req.newUserRewardID;
