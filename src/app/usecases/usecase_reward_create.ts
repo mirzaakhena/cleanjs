@@ -32,10 +32,6 @@ export const rewardCreate: Usecase<Outport, InportRequest, InportResponse> = {
     return async (ctx, req) => {
       //
 
-      // TODO validasi req.userID
-      // TODO validasi req.locationID
-      // TODO validasi req.tenantID
-
       const obj = new Reward();
       obj.id = req.newRewardID;
       obj.createdDate = req.now;

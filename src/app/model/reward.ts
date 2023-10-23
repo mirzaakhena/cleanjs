@@ -26,5 +26,3 @@ export type FindManyRewardFilter = BaseFindManyFilter & {
 };
 
 // =============================================================================================================================
-
-// export const ServiceRewardReduceStock = (obj: Reward) => (obj.stock -= 1);

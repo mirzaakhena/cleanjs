@@ -1,22 +1,21 @@
-import express from "express";
-import dotenv from "dotenv";
-import path from "path";
 import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+import path from "path";
 
 import { DataSource } from "typeorm";
-import { controllerCollection, controllers } from "./app/controller/_controller.js";
-import { Context, Inport, Middleware, RequestType, bootstrap } from "./framework/core.js";
-import { FuncType, middlewareContext, printController } from "./framework/controller_express.js";
+import { controllerCollection } from "./app/controller/_controller.js";
+import { collectSimpleController, middlewareContext, printController } from "./framework/controller_express.js";
+import { Controller, Middleware, bootstrap } from "./framework/core.js";
 import { transactionMiddleware } from "./framework/gateway_typeorm.js";
 import { recordingInit, recordingMiddleware, setDescriptionToContext } from "./plugin/recording/recording.js";
 
+import swaggerUi from "swagger-ui-express";
+import { fileURLToPath } from "url";
+import { handleError, handleUser } from "./app/controller/_middleware.js";
 import { gateways } from "./app/gateway/_gateway.js";
 import { usecases } from "./app/usecases/_usecase.js";
-import { handleError, handleUser } from "./app/controller/_middleware.js";
 import { controllerToOpenAPI } from "./plugin/swagger/middleware_swagger-ui.js";
-import { fileURLToPath } from "url";
-import swaggerUi from "swagger-ui-express";
-import { redocly } from "./plugin/swagger/middleware_redocly.js";
 
 export const main = async () => {
   //
@@ -71,7 +70,15 @@ export const main = async () => {
       frameworkMiddleware.push(transactionMiddleware(ds));
     }
 
-    const usecaseWithGatewayInstance = bootstrap(gateways(ds), usecases, controllers(mainRouter), frameworkMiddleware);
+    const controllers = [...collectSimpleController(mainRouter, controllerCollection)];
+
+    const usecaseWithGatewayInstance = bootstrap(
+      //
+      gateways(ds),
+      usecases,
+      controllers,
+      frameworkMiddleware
+    );
 
     const recordingRouter = express.Router();
 

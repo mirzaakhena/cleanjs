@@ -35,11 +35,3 @@ export type FindManyUserFilter = BaseFindManyFilter & {
 };
 
 // =============================================================================================================================
-
-// export const ServiceUserIncreasePoint = (obj: User, point: number) => {
-//   obj.totalPoints! += point;
-// };
-
-// export const ServiceUserDecreasePoint = (obj: User, point: number) => {
-//   obj.totalPoints! -= point;
-// };

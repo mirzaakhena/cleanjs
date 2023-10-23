@@ -14,6 +14,6 @@ export const controllerCollection: HTTPData[] = [
   ...controllerUserReward,
 ];
 
-export const controllers = (router: express.Router): Controller[] => {
+export const controllers_ = (router: express.Router): Controller[] => {
   return [...collectSimpleController(router, controllerCollection)];
 };
