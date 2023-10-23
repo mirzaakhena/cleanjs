@@ -1,30 +1,29 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { Image } from "../model/image.js";
-import { Reward as IReward } from "../model/reward.js";
 
 @Entity()
-export class Reward extends IReward {
+export class Reward {
   //
 
   @PrimaryColumn({ type: "varchar", length: 20 })
-  declare id: string;
+  id: string;
 
   @Column({ type: "timestamp" })
-  declare createdDate: Date;
+  createdDate: Date;
 
   @Column({ type: "varchar", length: 30 })
-  declare title: string;
+  title: string;
 
   @Column({ type: "varchar", length: 60 })
-  declare description: string;
+  description: string;
 
   @Column({ type: "int" })
-  declare point: number;
+  point: number;
 
   @Column({ type: "int" })
-  declare stock: number;
+  stock: number;
 
   @Column({ type: "jsonb", nullable: true })
-  declare image: Image;
+  image: Image;
   //
 }

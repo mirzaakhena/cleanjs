@@ -4,9 +4,9 @@ export const controllerUserReward: HTTPData[] = [
   {
     description: "Retrieve All Reward owned by User",
     method: "get",
-    route: "/api/v1/userreward",
+    path: "/api/v1/userreward",
     usecase: "userRewardGetAll",
-    tags: ["user_reward"],
+    tag: "user_reward",
     query: {
       page: { type: "number", default: 1 },
       size: { type: "number", default: 20 },
@@ -57,10 +57,10 @@ export const controllerUserReward: HTTPData[] = [
   {
     description: "Approve or Reject Reward owned by User",
     method: "post",
-    route: "/api/v1/userreward/:userRewardID/approval",
+    path: "/api/v1/userreward/:userRewardID/approval",
     usecase: "userRewardApproval",
-    tags: ["user_reward"],
-    params: {
+    tag: "user_reward",
+    param: {
       userRewardID: { type: "string", description: "id of userReward", default: 0 },
     },
     body: {

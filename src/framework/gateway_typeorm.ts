@@ -1,4 +1,4 @@
-import { DataSource, EntityTarget, FindOptionsOrder, FindOptionsRelations, FindOptionsWhere, ObjectLiteral } from "typeorm";
+import { DataSource, EntityTarget, FindOptionsOrder, FindOptionsRelations, FindOptionsWhere } from "typeorm";
 import { Context, Middleware } from "./core.js";
 import { BaseEntity, BaseFindManyFilter, FindManyEntity, FindOneEntity, Identifier, SaveEntity } from "./repo.js";
 
@@ -46,7 +46,9 @@ export const getManager = (ctx: Context, ds: DataSource) => {
 
 export const saveEntity = <U extends Identifier = string, T extends BaseEntity<U> = BaseEntity<U>>(ds: DataSource, entityClass: EntityTarget<T>): SaveEntity<T, U> => {
   return async (ctx, req) => {
-    await getManager(ctx, ds).getRepository(entityClass).save(req);
+    await getManager(ctx, ds) //
+      .getRepository(entityClass)
+      .save(req);
     return req.id;
   };
 };
@@ -99,10 +101,12 @@ export const findOneEntity = <U extends Identifier = string, T extends BaseEntit
       where = { ...where, id: id as any };
     }
 
-    const result = await getManager(ctx, ds).getRepository(entityClass).findOne({
-      where,
-      relations: options?.relations,
-    });
+    const result = await getManager(ctx, ds) //
+      .getRepository(entityClass)
+      .findOne({
+        where,
+        relations: options?.relations,
+      });
 
     return result as T | null;
   };

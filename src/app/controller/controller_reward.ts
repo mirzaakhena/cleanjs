@@ -4,9 +4,9 @@ export const controllerReward: HTTPData[] = [
   {
     description: "Get All exisiting Reward from Database",
     method: "get",
-    route: "/api/v1/reward",
+    path: "/api/v1/reward",
     usecase: "rewardGetAll",
-    tags: ["reward"],
+    tag: "reward",
     query: {
       page: { type: "number", default: 1, description: "Page number for pagination" },
       size: { type: "number", default: 20, description: "Number of items per page" },
@@ -38,9 +38,9 @@ export const controllerReward: HTTPData[] = [
   {
     description: "Insert new Reward to Database",
     method: "post",
-    route: "/api/v1/reward",
+    path: "/api/v1/reward",
     usecase: "rewardCreate",
-    tags: ["reward"],
+    tag: "reward",
     body: {
       title: { type: "string", default: "TITLE_REWARD", description: "Title for reward" },
       description: { type: "string", default: "DESC_REWARD", description: "Description for reward" },
@@ -71,10 +71,10 @@ export const controllerReward: HTTPData[] = [
   {
     description: "Redeem Reward by User",
     method: "post",
-    route: "/api/v1/reward/:rewardID/redeem",
+    path: "/api/v1/reward/:rewardID/redeem",
     usecase: "rewardRedeem",
-    tags: ["reward"],
-    params: {
+    tag: "reward",
+    param: {
       rewardID: { type: "string", description: "id of reward" },
     },
     header: {

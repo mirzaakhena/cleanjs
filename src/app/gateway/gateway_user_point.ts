@@ -1,21 +1,20 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { User as IUser } from "../model/user.js";
-import { UserPoint as IUserPoint } from "../model/user_point.js";
 import { User } from "./gateway_user.js";
 
 @Entity()
-export class UserPoint extends IUserPoint {
+export class UserPoint {
   //
   @PrimaryColumn({ type: "varchar", length: 20 })
-  declare id: string;
+  id: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: "userID" })
-  declare user: IUser;
+  user: IUser;
 
   @Column({ type: "int" })
-  declare point: number;
+  point: number;
 
   @Column({ type: "timestamp", nullable: true })
-  declare createdDate: Date;
+  createdDate: Date;
 }

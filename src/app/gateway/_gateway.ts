@@ -30,22 +30,80 @@ export const gateways = (ds: DataSource): Gateways => {
 
   return {
     //
-    findManyReward: { requestType: "query", gateway: findManyEntity(ds, Reward, rewardOptions) },
-    findOneReward: { requestType: "query", gateway: findOneEntity(ds, Reward) },
-    saveReward: { requestType: "command", gateway: saveEntity(ds, Reward) },
+    findManyReward: {
+      //
+      requestType: "query",
+      gateway: findManyEntity(ds, Reward, rewardOptions),
+    },
+    findOneReward: {
+      //
+      requestType: "query",
+      gateway: findOneEntity(ds, Reward),
+    },
+    saveReward: {
+      //
+      requestType: "command",
+      gateway: saveEntity(ds, Reward),
+    },
 
-    findManyStruk: { requestType: "query", gateway: findManyEntity(ds, Struk, strukOptions) },
-    findOneStruk: { requestType: "query", gateway: findOneEntity(ds, Struk, strukOptions) },
-    saveStruk: { requestType: "command", gateway: saveEntity(ds, Struk) },
+    findManyStruk: {
+      //
+      requestType: "query",
+      gateway: findManyEntity(ds, Struk, strukOptions),
+    },
+    findOneStruk: {
+      //
+      requestType: "query",
+      gateway: findOneEntity(ds, Struk, strukOptions),
+    },
+    saveStruk: {
+      //
+      requestType: "command",
+      gateway: saveEntity(ds, Struk),
+    },
 
-    findManyUserReward: { requestType: "query", gateway: findManyEntity(ds, UserReward, userRewardOptions) },
-    findOneUserReward: { requestType: "query", gateway: findOneEntity(ds, UserReward, userRewardOptions) },
-    saveUserReward: { requestType: "command", gateway: saveEntity(ds, UserReward) },
+    findManyUserReward: {
+      //
+      requestType: "query",
+      gateway: findManyEntity(ds, UserReward, userRewardOptions),
+    },
+    findOneUserReward: {
+      //
+      requestType: "query",
+      gateway: findOneEntity(ds, UserReward, userRewardOptions),
+    },
+    saveUserReward: {
+      //
+      requestType: "command",
+      gateway: saveEntity(ds, UserReward),
+    },
 
-    findManyUser: { requestType: "query", gateway: findManyEntity(ds, User) },
-    findOneUser: { requestType: "query", gateway: findOneEntity(ds, User) },
-    saveUser: { requestType: "command", gateway: saveEntity(ds, User) },
+    findManyUser: {
+      //
+      requestType: "query",
+      gateway: findManyEntity(ds, User),
+    },
+    findOneUser: {
+      //
+      requestType: "query",
+      gateway: findOneEntity(ds, User),
+    },
+    saveUser: {
+      //
+      requestType: "command",
+      gateway: saveEntity(ds, User),
+    },
 
-    saveUserPoint: { requestType: "command", gateway: saveEntity(ds, UserPoint) },
+    saveUserPoint: {
+      //
+      requestType: "command",
+      gateway: saveEntity(ds, UserPoint),
+    },
+
+    findManyUserPoint: {
+      //
+      requestType: "query",
+      gateway: findManyEntity(ds, UserPoint),
+    },
   };
 };

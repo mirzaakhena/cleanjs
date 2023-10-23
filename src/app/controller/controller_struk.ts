@@ -4,9 +4,9 @@ export const controllerStruk: HTTPData[] = [
   {
     description: "Retrieve All Uploaded Struk by User",
     method: "get",
-    route: "/api/v1/struk",
+    path: "/api/v1/struk",
     usecase: "strukGetAll",
-    tags: ["struk"],
+    tag: "struk",
     query: {
       page: { type: "number", default: 1 },
       size: { type: "number", default: 20 },
@@ -47,9 +47,9 @@ export const controllerStruk: HTTPData[] = [
   {
     description: "Upload a Struk by User",
     method: "post",
-    route: "/api/v1/struk",
+    path: "/api/v1/struk",
     usecase: "strukUpload",
-    tags: ["struk"],
+    tag: "struk",
     body: {
       billNumber: { type: "string", default: "BILL-123-456" }, // TODO remove default later
       totalTransaksi: { type: "number", default: 50000 }, // TODO remove default later
@@ -91,10 +91,10 @@ export const controllerStruk: HTTPData[] = [
   {
     description: "Approve or Reject action to Struk",
     method: "post",
-    route: "/api/v1/struk/:strukID/approval",
+    path: "/api/v1/struk/:strukID/approval",
     usecase: "strukApproval",
-    tags: ["struk"],
-    params: {
+    tag: "struk",
+    param: {
       strukID: { type: "string", description: "id of struk" },
     },
     body: {

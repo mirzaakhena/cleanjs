@@ -83,10 +83,10 @@ export type HTTPData = {
   description?: string;
   usecase: string;
   method: Methods;
-  route: string;
-  tags: string[];
+  path: string;
+  tag: string;
   query?: Record<string, QueryType>;
-  params?: Record<string, QueryType>;
+  param?: Record<string, QueryType>;
   header?: Record<string, QueryType>;
   body?: Record<string, QueryType>;
   local?: Record<string, FuncType>;
@@ -102,7 +102,7 @@ export const simpleController = <T = any>(
   return createController([httpData.usecase], (x) => {
     //
 
-    router[httpData.method](httpData.route, async (req, res, next) => {
+    router[httpData.method](httpData.path, async (req, res, next) => {
       //
 
       const ctx = getRequestWithContext(req);
@@ -215,25 +215,46 @@ const checkLocalData = (ctx: Context, key: string, ft: FuncType): any => {
 export const printController = (httpDatas: HTTPData[]) => {
   let maxLengthRoute = 0;
   let maxLengthUsecase = 0;
+  let maxLengthTag = 0;
   httpDatas.forEach((x) => {
-    if (maxLengthRoute < x.route.toString().length) {
-      maxLengthRoute = x.route.toString().length;
+    if (maxLengthRoute < x.path.toString().length) {
+      maxLengthRoute = x.path.toString().length;
     }
 
     const usecase = camelToPascalWithSpace(x.usecase.toString());
-
     if (maxLengthUsecase < usecase.length) {
       maxLengthUsecase = usecase.length;
     }
+
+    if (maxLengthTag < x.tag.length) {
+      maxLengthTag = x.tag.length;
+    }
   });
 
+  let tag = "";
+
   console.table(
-    httpDatas.map((x) => ({
+    //
+
+    httpDatas.map((x) => {
       //
-      method: x.method.padStart(6).toUpperCase(),
-      route: x.route.toString().padEnd(maxLengthRoute).substring(0),
-      usecase: camelToPascalWithSpace(x.usecase).padEnd(maxLengthUsecase).substring(0),
-    }))
+
+      let groupLabel = x.tag;
+
+      if (tag !== x.tag) {
+        tag = x.tag;
+      } else {
+        groupLabel = "";
+      }
+
+      return {
+        //
+        tag: groupLabel.toUpperCase().padEnd(maxLengthTag),
+        usecase: camelToPascalWithSpace(x.usecase).padEnd(maxLengthUsecase).substring(0),
+        method: x.method.padStart(6).toUpperCase(),
+        path: x.path.toString().padEnd(maxLengthRoute).substring(0),
+      };
+    })
   );
 };
 

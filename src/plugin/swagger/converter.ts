@@ -60,7 +60,7 @@ export const NewOpenAPI = (): OpenAPIObject => {
   };
 };
 
-function extractRoute(input: HTTPData, openApiObj: OpenAPIObject): ParameterObject[] {
+function extractPath(input: HTTPData, openApiObj: OpenAPIObject): ParameterObject[] {
   //
   let params: ParameterObject[] = [];
 
@@ -87,8 +87,8 @@ function extractRoute(input: HTTPData, openApiObj: OpenAPIObject): ParameterObje
   // params will directly inject in parameters not in components
   params = [
     ...params,
-    ...(input.params
-      ? Object.entries(input.params).map(
+    ...(input.param
+      ? Object.entries(input.param).map(
           ([name, queryType]) =>
             ({
               name,
@@ -254,25 +254,25 @@ export function handleResponse(input: Record<number, Record<string, QueryType>>)
 export function controllerToSwagger(input: HTTPData, openApiObj: OpenAPIObject) {
   //
 
-  let route = input.route;
+  let path = input.path;
 
-  // replace url route from :value into {value}
-  if (input.params) {
-    Object.keys(input.params).forEach((param) => {
-      route = route.replace(`:${param}`, `{${param}}`);
+  // replace url path from :value into {value}
+  if (input.param) {
+    Object.keys(input.param).forEach((param) => {
+      path = path.replace(`:${param}`, `{${param}}`);
     });
   }
 
   openApiObj.paths = {
     ...openApiObj.paths,
-    [route]: {
-      ...openApiObj.paths[route],
+    [path]: {
+      ...openApiObj.paths[path],
       [input.method]: {
-        tags: input.tags,
+        tags: [input.tag],
         summary: camelToPascalWithSpace(input.usecase),
         description: input.description ? input.description : input.usecase,
         operationId: input.usecase,
-        parameters: extractRoute(input, openApiObj),
+        parameters: extractPath(input, openApiObj),
         requestBody: input.body && {
           description: "", // TODO input it later
           content: {
