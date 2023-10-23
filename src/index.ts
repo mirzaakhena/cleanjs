@@ -6,7 +6,7 @@ import path from "path";
 import { DataSource } from "typeorm";
 import { controllerCollection } from "./app/controller/_controller.js";
 import { collectSimpleController, middlewareContext, printController } from "./framework/controller_express.js";
-import { Controller, Middleware, bootstrap } from "./framework/core.js";
+import { Middleware, bootstrap } from "./framework/core.js";
 import { transactionMiddleware } from "./framework/gateway_typeorm.js";
 import { recordingInit, recordingMiddleware, setDescriptionToContext } from "./plugin/recording/recording.js";
 
@@ -50,23 +50,14 @@ export const main = async () => {
     const frameworkMiddleware = [];
     {
       isDevMode && frameworkMiddleware.push(recordingMiddleware());
-
       // sample how to create middleware
       const middlewareSample: Middleware = (funcType, requestType, name, inport) => {
-        //
         return async (ctx, input) => {
-          //
-
           setDescriptionToContext(ctx, "omar");
-
-          const result = await inport(ctx, input);
-
-          return result;
+          return await inport(ctx, input);
         };
       };
-
       isDevMode && frameworkMiddleware.push(middlewareSample);
-
       frameworkMiddleware.push(transactionMiddleware(ds));
     }
 
@@ -104,15 +95,16 @@ export const main = async () => {
 
     app.use(handleError());
 
-    const openApiObj = controllerToOpenAPI(controllerCollection);
-    isDevMode && app.use("/openapi", (req, res) => res.json(openApiObj));
-    isDevMode && app.use("/swagger", swaggerUi.serve, swaggerUi.setup(openApiObj));
-    // isDevMode && app.use("/redocly", redocly());
+    {
+      const openApiObj = controllerToOpenAPI(controllerCollection);
+      isDevMode && app.use("/openapi", (req, res) => res.json(openApiObj));
+      isDevMode && app.use("/swagger", swaggerUi.serve, swaggerUi.setup(openApiObj));
+      // isDevMode && app.use("/redocly", redocly());
+    }
 
     printController(controllerCollection);
-    // printRouteToConsole("", mainRouter);
     console.log("swagger url", "http://localhost:3000/swagger");
-    console.log("openapi url ", "http://localhost:3000/openapi");
+    console.log("openapi url", "http://localhost:3000/openapi");
     // console.log("redocly url ", "http://localhost:3000/redocly");
 
     await ds.initialize();
