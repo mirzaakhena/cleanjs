@@ -63,7 +63,7 @@ export type OperationObject = {
 };
 
 export type ResponseObject = {
-  description: string;
+  description?: string;
   content?: {
     [mediaType: string]: MediaTypeObject | ReferenceObject;
   };

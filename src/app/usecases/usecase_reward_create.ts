@@ -37,15 +37,14 @@ export const rewardCreate: Usecase<Outport, InportRequest, InportResponse> = {
       // TODO validasi req.tenantID
 
       const obj = new Reward();
-      {
-        obj.id = req.newRewardID;
-        obj.createdDate = req.now;
-        obj.title = req.title;
-        obj.description = req.description;
-        obj.point = req.point;
-        obj.stock = req.stock;
-        obj.image = req.image;
-      }
+      obj.id = req.newRewardID;
+      obj.createdDate = req.now;
+      obj.title = req.title;
+      obj.description = req.description;
+      obj.point = req.point;
+      obj.stock = req.stock;
+      obj.image = req.image;
+
       await o.saveReward(ctx, obj);
 
       return { id: req.newRewardID };

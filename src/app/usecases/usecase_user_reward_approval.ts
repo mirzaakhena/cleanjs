@@ -7,12 +7,15 @@ import { User, UserID } from "../model/user.js";
 import { UserPoint, UserPointID } from "../model/user_point.js";
 import { UserReward, UserRewardID } from "../model/user_reward.js";
 
+// type SendEmail = (subject: string, message: string) => void;
+
 type Outport = {
   findOneUserReward: FindOneEntity<UserReward, UserRewardID>;
   saveUserReward: SaveEntity<UserReward, UserRewardID>;
   saveReward: SaveEntity<Reward, RewardID>;
   saveUser: SaveEntity<User, UserID>;
   saveUserPoint: SaveEntity<UserPoint, UserPointID>;
+  // sendEmail: SendEmail;
 };
 
 export type InportRequest = {

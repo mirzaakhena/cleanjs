@@ -108,12 +108,12 @@ export const prepareRecorder = (ctx: Context) => {
   }
 
   if (!recordingState.saveRecording) {
-    console.log("saveRecording not initialized");
     return;
   }
 
   ctx.data[RECORDING_FIELD] = {
     functions: [],
+    description: "meoong",
   };
 };
 
@@ -172,6 +172,22 @@ export const createBaseFunc = <REQUEST, RESPONSE>(rf: RecordFunction, actionName
   };
 };
 
+export const setDescriptionToContext = (ctx: Context, description: string) => {
+  if (!ctx.data[RECORDING_FIELD]) {
+    return;
+  }
+
+  ctx.data[RECORDING_FIELD].description = description;
+};
+
+export const getDescriptionFromContext = (ctx: Context) => {
+  if (!ctx.data[RECORDING_FIELD]) {
+    return undefined;
+  }
+
+  return ctx.data[RECORDING_FIELD].description;
+};
+
 export const recordingMiddleware: () => Middleware = () => {
   //
 
@@ -185,7 +201,9 @@ export const recordingMiddleware: () => Middleware = () => {
         return await inport(ctx, input);
       }
 
-      if (funcType === "controller" && requestType === "command") {
+      //
+
+      if (funcType === "controller") {
         //
         prepareRecorder(ctx);
         try {
@@ -196,7 +214,7 @@ export const recordingMiddleware: () => Middleware = () => {
             funcName: name,
             input,
             output: result,
-            description: "", // TODO fill this later
+            description: getDescriptionFromContext(ctx),
           });
 
           return result;
@@ -210,7 +228,7 @@ export const recordingMiddleware: () => Middleware = () => {
             funcName: name,
             input,
             error,
-            description: "", // TODO fill this later
+            description: getDescriptionFromContext(ctx),
           });
 
           throw error;
@@ -226,7 +244,7 @@ export const recordingMiddleware: () => Middleware = () => {
             funcName: name,
             input,
             output: result,
-            description: "", // TODO fill this later
+            description: getDescriptionFromContext(ctx),
           });
 
           return result;
@@ -240,7 +258,7 @@ export const recordingMiddleware: () => Middleware = () => {
             funcName: name,
             input,
             error,
-            description: "", // TODO fill this later
+            description: getDescriptionFromContext(ctx),
           });
 
           throw error;
@@ -283,3 +301,13 @@ export const recordingInit = (router: express.Router, ds: DataSource, usecaseWit
 
   return router;
 };
+
+// // recording_ui
+// {
+//   const __filename = fileURLToPath(import.meta.url);
+//   const __dirname = path.dirname(__filename);
+//   const distPath = path.join(__dirname, "plugin/recording/dist");
+//   isDevMode && app.use("/recording", recordingInit(recordingRouter, ds, usecaseWithGatewayInstance));
+//   app.get("/recording/ui", (req, res) => res.sendFile(path.join(distPath, "index.html")));
+//   app.use("/assets", express.static(path.join(distPath, "assets")));
+// }

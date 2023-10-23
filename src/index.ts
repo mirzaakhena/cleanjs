@@ -1,13 +1,14 @@
 import express from "express";
 import dotenv from "dotenv";
 import path from "path";
+import cors from "cors";
 
 import { DataSource } from "typeorm";
 import { controllerCollection, controllers } from "./app/controller/_controller.js";
-import { bootstrap } from "./framework/core.js";
-import { middlewareContext, printRouteToConsole } from "./framework/controller_express.js";
+import { Context, Inport, Middleware, RequestType, bootstrap } from "./framework/core.js";
+import { FuncType, middlewareContext, printRouteToConsole } from "./framework/controller_express.js";
 import { transactionMiddleware } from "./framework/gateway_typeorm.js";
-import { recordingInit, recordingMiddleware } from "./plugin/recording/recording.js";
+import { recordingInit, recordingMiddleware, setDescriptionToContext } from "./plugin/recording/recording.js";
 
 import { gateways } from "./app/gateway/_gateway.js";
 import { usecases } from "./app/usecases/_usecase.js";
@@ -36,12 +37,13 @@ export const main = async () => {
       database: "mydb",
       synchronize: true,
       connectTimeoutMS: 500,
-      logging: false,
+      logging: true,
       entities: [
         //
         "src/app/gateway/gateway_*.ts",
         "src/plugin/recording/recording_typeorm.ts",
       ],
+      migrations: ["src/migrations/*.ts"],
     });
 
     const mainRouter = express.Router();
@@ -49,6 +51,23 @@ export const main = async () => {
     const frameworkMiddleware = [];
     {
       isDevMode && frameworkMiddleware.push(recordingMiddleware());
+
+      // sample how to create middleware
+      const middlewareSample: Middleware = (funcType, requestType, name, inport) => {
+        //
+        return async (ctx, input) => {
+          //
+
+          setDescriptionToContext(ctx, "hahahah");
+
+          const result = await inport(ctx, input);
+
+          return result;
+        };
+      };
+
+      isDevMode && frameworkMiddleware.push(middlewareSample);
+
       frameworkMiddleware.push(transactionMiddleware(ds));
     }
 
@@ -59,6 +78,7 @@ export const main = async () => {
     const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+    app.use(cors());
     app.use(middlewareContext());
     app.use(handleUser());
     app.use(mainRouter);

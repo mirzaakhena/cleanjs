@@ -48,7 +48,7 @@ export const strukApproval: Usecase<Outport, InportRequest, InportResponse> = {
         throw new Error("struk not found");
       }
 
-      if (["APPROVED", "REJECTED"].some((x) => objUS.status === x)) {
+      if (objUS.status !== "PENDING") {
         throw new Error(`struk has been ${objUS.status} before`);
       }
 

@@ -8,8 +8,16 @@ export class Approval<T extends Identifier> extends BaseEntity<T> {
   //
 
   status: ApprovalStatus;
-  // approvalBy: Admin | null;
   approvalDate: Date | null;
+  // approvalBy: Admin | null;
+
+  // constructor(
+  //   //
+  //   protected status: ApprovalStatus,
+  //   protected approvalDate: Date
+  // ) {
+  //   super();
+  // }
 
   updateStatus(now: Date, adminID: AdminID, approvalActionStatus: ApprovalActionStatus) {
     //

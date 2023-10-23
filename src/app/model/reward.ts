@@ -1,10 +1,9 @@
-import { BaseFindManyFilter, Identifier } from "../../framework/repo.js";
+import { BaseEntity, BaseFindManyFilter, Identifier } from "../../framework/repo.js";
 import { Image } from "./image.js";
 
 export type RewardID = Identifier;
 
-export class Reward {
-  id: RewardID;
+export class Reward extends BaseEntity<RewardID> {
   createdDate: Date;
   title: string;
   description: string;

@@ -8,6 +8,8 @@ export type HTTPDataResponse = {
   body: any;
 };
 
+export type ResponseCode = 200 | 201 | 400 | 401 | number;
+
 export type Methods = "all" | "get" | "post" | "put" | "delete" | "patch" | "options" | "head";
 
 export type RequestWithContext = express.Request & {
@@ -51,7 +53,7 @@ export const extractBoolean = (value: any): boolean | undefined => {
   return value === "true" ? true : value === "false" ? false : undefined;
 };
 
-export type DataType = "string" | "date" | "boolean" | "number" | "object" | "array_of_object" | "array_of_number" | "array_of_string";
+export type DataType = "string" | "date" | "boolean" | "number" | "object" | "array" | "array_of_object" | "array_of_number" | "array_of_string";
 
 export type QueryType = {
   type: DataType;
@@ -67,6 +69,7 @@ export type FuncName = "dateNow" | "assign" | "randomString" | "contextData";
 export type FuncType = { funcName: FuncName; input?: any };
 
 export type HTTPData = {
+  description?: string;
   usecase: string;
   method: Methods;
   route: string;
@@ -76,6 +79,7 @@ export type HTTPData = {
   header?: Record<string, QueryType>;
   body?: Record<string, QueryType>;
   local?: Record<string, FuncType>;
+  response?: Record<ResponseCode, Record<string, QueryType>>;
 };
 
 export const simpleController = <T = any>(

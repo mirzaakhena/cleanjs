@@ -1,6 +1,6 @@
 import { query } from "express";
 import { HTTPData, QueryType } from "../../framework/controller_express.js";
-import { OpenAPIObject, OperationObject, ParameterObject, PathItemObject, ReferenceObject, RequestBodyObject, SchemaObject } from "./schema.js";
+import { OpenAPIObject, OperationObject, ParameterObject, PathItemObject, ReferenceObject, RequestBodyObject, ResponseObject, SchemaObject } from "./schema.js";
 
 export const NewOpenAPI = (): OpenAPIObject => {
   return {
@@ -190,6 +190,23 @@ function handleProperties(input: Record<string, QueryType>) {
       continue;
     }
 
+    if (field.type === "array" && field.properties) {
+      schemaObj = {
+        ...schemaObj,
+        [key]: {
+          type: "array",
+          default: [],
+          description: field.description,
+          items: {
+            type: "object",
+            properties: handleProperties(field.properties),
+          },
+        } as SchemaObject,
+      };
+
+      continue;
+    }
+
     schemaObj = {
       ...schemaObj,
       [key]: {
@@ -201,6 +218,54 @@ function handleProperties(input: Record<string, QueryType>) {
   }
 
   return schemaObj;
+}
+
+export function handleResponse(input: Record<number, Record<string, QueryType>>) {
+  type ResponseByCode = {
+    [statusCode: string]: ResponseObject;
+  };
+
+  let responseByCode: ResponseByCode = {};
+
+  for (const key in input) {
+    const field = input[key];
+
+    responseByCode = {
+      ...responseByCode,
+      [key]: {
+        description: "", // TODO: input later
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: handleProperties(field),
+            },
+          },
+        },
+      },
+    };
+  }
+
+  // for (const key in input) {
+  //   const field = input[key];
+
+  //   responseByCode = {
+  //     ...responseByCode,
+  //     [key]: handleProperties(field),
+  //   };
+  // }
+
+  // description: "", // TODO input it later
+  // content: {
+  //   "application/json": {
+  //     schema: {
+  //       type: "object",
+  //       properties: handleProperties(input.body),
+  //     },
+  //   },
+  // },
+
+  return responseByCode;
 }
 
 export function controllerToSwagger(input: HTTPData, openApiObj: OpenAPIObject) {
@@ -221,11 +286,12 @@ export function controllerToSwagger(input: HTTPData, openApiObj: OpenAPIObject) 
       ...openApiObj.paths[route],
       [input.method]: {
         tags: input.tags,
-        summary: input.usecase,
-        description: input.usecase,
+        summary: camelToPascalWithSpace(input.usecase),
+        description: input.description ? input.description : input.usecase,
         operationId: input.usecase,
         parameters: extractRoute(input, openApiObj),
         requestBody: input.body && {
+          description: "", // TODO input it later
           content: {
             "application/json": {
               schema: {
@@ -235,10 +301,16 @@ export function controllerToSwagger(input: HTTPData, openApiObj: OpenAPIObject) 
             },
           },
         },
-        responses: {},
+        responses: input.response && handleResponse(input.response),
       } as OperationObject,
     } as PathItemObject,
   };
 
   //
+}
+
+function camelToPascalWithSpace(input: string): string {
+  return input
+    .replace(/([a-z])([A-Z])/g, "$1 $2") // Add space between camelCase
+    .replace(/([a-zA-Z])+/g, (match) => match.charAt(0).toUpperCase() + match.slice(1)); // Convert to PascalCase
 }

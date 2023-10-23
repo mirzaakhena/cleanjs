@@ -46,10 +46,10 @@ export const handleRecording = (
     //
   });
 
-  router.post("/status/:status", async (req, res) => {
+  router.post("/status", async (req, res) => {
     //
 
-    const status = req.params.status;
+    const status = req.body.status;
 
     try {
       if (!["enabled", "disabled"].some((x) => x === status)) {

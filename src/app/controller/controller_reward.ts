@@ -2,6 +2,7 @@ import { HTTPData } from "../../framework/controller_express.js";
 
 export const controllerReward: HTTPData[] = [
   {
+    description: "Get All exisiting Reward from Database",
     method: "get",
     route: "/api/v1/reward",
     usecase: "rewardGetAll",
@@ -10,8 +11,32 @@ export const controllerReward: HTTPData[] = [
       page: { type: "number", default: 1, description: "Page number for pagination" },
       size: { type: "number", default: 20, description: "Number of items per page" },
     },
+    response: {
+      200: {
+        items: {
+          type: "array",
+          properties: {
+            id: { type: "string", description: "" },
+            createdDate: { type: "string", description: "" },
+            title: { type: "string", description: "" },
+            description: { type: "string", description: "" },
+            point: { type: "number", description: "", default: 0 },
+            stock: { type: "number", description: "", default: 0 },
+            image: {
+              type: "object",
+              properties: {
+                name: { type: "string", description: "image name" },
+                url: { type: "string", description: "url of image" },
+              },
+            },
+          },
+        },
+        count: { type: "number", default: 0 },
+      },
+    },
   },
   {
+    description: "Insert new Reward to Database",
     method: "post",
     route: "/api/v1/reward",
     usecase: "rewardCreate",
@@ -27,8 +52,17 @@ export const controllerReward: HTTPData[] = [
       now: { funcName: "dateNow" },
       newRewardID: { funcName: "randomString" },
     },
+    response: {
+      200: {
+        id: { type: "string", description: "id of new reward" },
+      },
+      400: {
+        message: { type: "string", description: "error message" },
+      },
+    },
   },
   {
+    description: "Redeem Reward by User",
     method: "post",
     route: "/api/v1/reward/:rewardID/redeem",
     usecase: "rewardRedeem",
@@ -42,7 +76,14 @@ export const controllerReward: HTTPData[] = [
     local: {
       now: { funcName: "dateNow" },
       newUserRewardID: { funcName: "randomString" },
-      // userID: { funcName: "contextData", input: "userLogin" },
+    },
+    response: {
+      200: {
+        id: { type: "string", description: "id of new reward" },
+      },
+      400: {
+        message: { type: "string", description: "error message" },
+      },
     },
   },
 ];

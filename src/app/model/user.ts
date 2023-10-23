@@ -7,6 +7,8 @@ export type Gender = "MALE" | "FEMALE";
 export class User extends BaseEntity<UserID> {
   name?: string;
   createdDate?: Date;
+  totalPoints?: number;
+
   // phone?: string;
   // gender?: Gender;
   // birthDate?: Date;
@@ -14,7 +16,6 @@ export class User extends BaseEntity<UserID> {
   // kecamatan?: string;
   // kabupatenOrKota?: string;
   // kodeRefferal?: string;
-  totalPoints?: number;
 
   readonly increasePoint? = (point: number) => (this.totalPoints! += point);
 

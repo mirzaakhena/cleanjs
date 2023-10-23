@@ -1,5 +1,6 @@
 import express from "express";
 import { RequestWithContext } from "../../framework/controller_express.js";
+import { setDescriptionToContext } from "../../plugin/recording/recording.js";
 
 export const handleUser = () => {
   return (req: RequestWithContext, res: express.Response, next: express.NextFunction) => {
@@ -8,6 +9,8 @@ export const handleUser = () => {
     if (req.ctx) {
       req.ctx.data["userLogin"] = "zunan";
       req.ctx.data["adminLogin"] = "omar";
+
+      setDescriptionToContext(req.ctx, "mirza");
     }
 
     return next();
@@ -21,7 +24,6 @@ export const handleError = () => {
     //
 
     return res.status(400).json({
-      status: 400,
       message: err.message,
     });
 
