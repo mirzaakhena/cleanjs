@@ -1,6 +1,7 @@
 import { query } from "express";
 import { HTTPData, QueryType } from "../../framework/controller_express.js";
 import { OpenAPIObject, OperationObject, ParameterObject, PathItemObject, ReferenceObject, RequestBodyObject, ResponseObject, SchemaObject } from "./schema.js";
+import { camelToPascalWithSpace } from "../../utility.js";
 
 export const NewOpenAPI = (): OpenAPIObject => {
   return {
@@ -59,54 +60,6 @@ export const NewOpenAPI = (): OpenAPIObject => {
   };
 };
 
-function handleSchema(name: string, queryType: QueryType): SchemaObject {
-  //
-
-  if (queryType.type === "string") {
-    return {
-      type: "string",
-      enum: queryType.enum || undefined,
-    };
-  }
-
-  if (queryType.type === "number") {
-    return {
-      type: "integer",
-      format: "int64",
-    };
-  }
-
-  if (queryType.type === "array_of_string") {
-    return {
-      type: "array",
-      items: {
-        type: "string",
-      },
-    };
-  }
-
-  if (queryType.type === "array_of_object") {
-    return {
-      type: "array",
-      items: {
-        //
-        type: "object",
-        properties: {},
-      },
-    };
-  }
-
-  // ...Object.entries(queryType.properties).map(x=> {
-
-  //   return []
-  // }),
-
-  const schemaObj: SchemaObject = {
-    //
-  };
-  return schemaObj;
-}
-
 function extractRoute(input: HTTPData, openApiObj: OpenAPIObject): ParameterObject[] {
   //
   let params: ParameterObject[] = [];
@@ -121,10 +74,10 @@ function extractRoute(input: HTTPData, openApiObj: OpenAPIObject): ParameterObje
             ({
               name,
               in: "query",
-              description: details.description || undefined, // Handle undefined description
+              description: `${details.description}xxx` || undefined, // Handle undefined description
               default: details.default,
               required: details.required || undefined,
-              schema: handleSchema(name, details),
+              schema: input.query ? handleProperties(input.query) : undefined,
             } as ParameterObject)
         )
       : []),
@@ -186,11 +139,24 @@ function handleProperties(input: Record<string, QueryType>) {
           properties: handleProperties(field.properties),
         } as SchemaObject,
       };
-
       continue;
     }
 
-    if (field.type === "array" && field.properties) {
+    if (!field.type.startsWith("array")) {
+      schemaObj = {
+        ...schemaObj,
+        [key]: {
+          type: field.type === "number" ? "integer" : field.type,
+          format: field.type === "number" ? "int64" : undefined,
+          default: field.default,
+          description: field.description,
+          enum: field.enum || undefined,
+        } as SchemaObject,
+      };
+      continue;
+    }
+
+    if (field.type === "array_of_object" && field.properties) {
       schemaObj = {
         ...schemaObj,
         [key]: {
@@ -203,18 +169,54 @@ function handleProperties(input: Record<string, QueryType>) {
           },
         } as SchemaObject,
       };
-
       continue;
     }
 
-    schemaObj = {
-      ...schemaObj,
-      [key]: {
-        type: field.type === "number" ? "integer" : field.type,
-        default: field.default,
-        description: field.description,
-      } as SchemaObject,
-    };
+    if (field.type === "array_of_string") {
+      schemaObj = {
+        ...schemaObj,
+        [key]: {
+          type: "array",
+          default: [],
+          description: field.description,
+          items: {
+            type: "string",
+          },
+        } as SchemaObject,
+      };
+      continue;
+    }
+
+    if (field.type === "array_of_number") {
+      schemaObj = {
+        ...schemaObj,
+        [key]: {
+          type: "array",
+          default: [],
+          description: field.description,
+          items: {
+            type: "number",
+            format: "int64",
+          },
+        } as SchemaObject,
+      };
+      continue;
+    }
+
+    if (field.type === "array_of_boolean") {
+      schemaObj = {
+        ...schemaObj,
+        [key]: {
+          type: "array",
+          default: [],
+          description: field.description,
+          items: {
+            type: "boolean",
+          },
+        } as SchemaObject,
+      };
+      continue;
+    }
   }
 
   return schemaObj;
@@ -245,25 +247,6 @@ export function handleResponse(input: Record<number, Record<string, QueryType>>)
       },
     };
   }
-
-  // for (const key in input) {
-  //   const field = input[key];
-
-  //   responseByCode = {
-  //     ...responseByCode,
-  //     [key]: handleProperties(field),
-  //   };
-  // }
-
-  // description: "", // TODO input it later
-  // content: {
-  //   "application/json": {
-  //     schema: {
-  //       type: "object",
-  //       properties: handleProperties(input.body),
-  //     },
-  //   },
-  // },
 
   return responseByCode;
 }
@@ -307,10 +290,4 @@ export function controllerToSwagger(input: HTTPData, openApiObj: OpenAPIObject) 
   };
 
   //
-}
-
-function camelToPascalWithSpace(input: string): string {
-  return input
-    .replace(/([a-z])([A-Z])/g, "$1 $2") // Add space between camelCase
-    .replace(/([a-zA-Z])+/g, (match) => match.charAt(0).toUpperCase() + match.slice(1)); // Convert to PascalCase
 }

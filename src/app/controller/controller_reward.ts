@@ -14,7 +14,7 @@ export const controllerReward: HTTPData[] = [
     response: {
       200: {
         items: {
-          type: "array",
+          type: "array_of_object",
           properties: {
             id: { type: "string", description: "" },
             createdDate: { type: "string", description: "" },
@@ -46,7 +46,14 @@ export const controllerReward: HTTPData[] = [
       description: { type: "string", default: "DESC_REWARD", description: "Description for reward" },
       point: { type: "number", default: "10", description: "the number of point for a reward" },
       stock: { type: "number", default: "100", description: "reward quantity" },
-      image: { type: "object", default: { id: "IMAGE_ID", name: "IMAGE_NAME", url: "IMAGE_URL" }, description: "image thumbnail information" },
+      image: {
+        type: "object",
+        description: "image thumbnail",
+        properties: {
+          name: { type: "string", description: "image name" },
+          url: { type: "string", description: "url of image" },
+        },
+      },
     },
     local: {
       now: { funcName: "dateNow" },

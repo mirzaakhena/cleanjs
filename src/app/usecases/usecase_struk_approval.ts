@@ -1,6 +1,5 @@
 import { Usecase } from "../../framework/core.js";
 import { FindOneEntity, SaveEntity } from "../../framework/repo.js";
-import { AdminID } from "../model/admin.js";
 import { ApprovalActionStatus, ApprovalStatus } from "../model/approval.js";
 import { Struk, StrukID } from "../model/struk.js";
 import { User, UserID } from "../model/user.js";
@@ -14,7 +13,6 @@ type Outport = {
 };
 
 export type InportRequest = {
-  adminID: AdminID;
   now: Date;
   newUserPointID: UserPointID;
   strukID: StrukID;
@@ -53,7 +51,7 @@ export const strukApproval: Usecase<Outport, InportRequest, InportResponse> = {
       }
 
       // ubah status Struk
-      const status = objUS.updateStatus!(req.now, req.adminID, req.approvalStatus);
+      const status = objUS.updateStatus(req.now, req.approvalStatus);
       await o.saveStruk(ctx, objUS);
 
       // Jika di reject langsung keluar saja
@@ -80,7 +78,7 @@ export const strukApproval: Usecase<Outport, InportRequest, InportResponse> = {
 
       // increment point pada user
       {
-        objUS.user.increasePoint!(point);
+        objUS.user.increasePoint(point);
         await o.saveUser(ctx, objUS.user);
       }
 

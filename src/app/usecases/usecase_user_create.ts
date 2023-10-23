@@ -27,12 +27,18 @@ export const userCreate: Usecase<Outport, InportRequest, InportResponse> = {
     return async (ctx, req) => {
       //
 
+      const name = req.name.trim();
+      if (name === "") {
+        throw new Error("name is required");
+      }
+
       const obj = new User();
       {
         obj.id = req.newUserID;
         obj.createdDate = req.now;
-        obj.name = req.name;
+        obj.name = name;
         obj.totalPoints = 1000;
+        obj.status = "NON_ACTIVE";
       }
 
       await o.saveUser(ctx, obj);

@@ -4,27 +4,28 @@ export type UserID = Identifier;
 
 export type Gender = "MALE" | "FEMALE";
 
+export type UserStatus = "ACTIVE" | "NON_ACTIVE";
+
 export class User extends BaseEntity<UserID> {
   name?: string;
   createdDate?: Date;
   totalPoints?: number;
+  status?: UserStatus;
 
-  // phone?: string;
-  // gender?: Gender;
-  // birthDate?: Date;
-  // address?: string;
-  // kecamatan?: string;
-  // kabupatenOrKota?: string;
-  // kodeRefferal?: string;
+  increasePoint(point: number) {
+    this.totalPoints! += point;
+  }
 
-  readonly increasePoint? = (point: number) => (this.totalPoints! += point);
-
-  readonly decreasePoint? = (point: number) => {
+  decreasePoint(point: number) {
     if (this.totalPoints! - point < 0) {
       throw new Error("not enough points");
     }
     this.totalPoints! -= point;
-  };
+  }
+
+  changeStatus(status: UserStatus) {
+    this.status! = status;
+  }
 }
 
 // =============================================================================================================================

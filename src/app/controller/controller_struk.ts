@@ -14,11 +14,14 @@ export const controllerStruk: HTTPData[] = [
     response: {
       200: {
         items: {
-          type: "array",
+          type: "array_of_object",
           properties: {
             id: { type: "string" },
             status: { type: "string" },
             approvalDate: { type: "string" },
+            createdDate: { type: "string", description: "" },
+            billNumber: { type: "string", description: "" },
+            totalTransaksi: { type: "number", default: 0, description: "" },
             user: {
               type: "object",
               properties: {
@@ -28,9 +31,6 @@ export const controllerStruk: HTTPData[] = [
                 totalPoints: { type: "number", default: 0, description: "point own by user" },
               },
             },
-            createdDate: { type: "string", description: "" },
-            billNumber: { type: "string", description: "" },
-            totalTransaksi: { type: "number", default: 0, description: "" },
             screenshot: {
               type: "object",
               properties: {
@@ -98,12 +98,11 @@ export const controllerStruk: HTTPData[] = [
       strukID: { type: "string", description: "id of struk" },
     },
     body: {
-      approvalStatus: { type: "string", default: "APPROVE" }, // TODO remove default later
+      approvalStatus: { type: "string", default: "APPROVE", enum: ["APPROVE", "REJECT"] }, // TODO remove default later
     },
     local: {
       newUserPointID: { funcName: "randomString" },
       now: { funcName: "dateNow" },
-      adminID: { funcName: "contextData", input: "adminLogin" },
     },
     response: {
       200: {

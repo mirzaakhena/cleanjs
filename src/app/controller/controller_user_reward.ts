@@ -14,7 +14,7 @@ export const controllerUserReward: HTTPData[] = [
     response: {
       200: {
         items: {
-          type: "array",
+          type: "array_of_object",
           properties: {
             id: { type: "string" },
             status: { type: "string" },
@@ -61,15 +61,14 @@ export const controllerUserReward: HTTPData[] = [
     usecase: "userRewardApproval",
     tags: ["user_reward"],
     params: {
-      userRewardID: { type: "string", description: "id of userReward" },
+      userRewardID: { type: "string", description: "id of userReward", default: 0 },
     },
     body: {
-      status: { type: "string", default: "APPROVE" },
+      status: { type: "string", default: "APPROVE", enum: ["APPROVE", "REJECT"] },
     },
     local: {
       now: { funcName: "dateNow" },
       newUserPointID: { funcName: "randomString" },
-      adminID: { funcName: "contextData", input: "adminLogin" },
     },
     response: {
       200: {

@@ -6,7 +6,7 @@ import cors from "cors";
 import { DataSource } from "typeorm";
 import { controllerCollection, controllers } from "./app/controller/_controller.js";
 import { Context, Inport, Middleware, RequestType, bootstrap } from "./framework/core.js";
-import { FuncType, middlewareContext, printRouteToConsole } from "./framework/controller_express.js";
+import { FuncType, middlewareContext, printController } from "./framework/controller_express.js";
 import { transactionMiddleware } from "./framework/gateway_typeorm.js";
 import { recordingInit, recordingMiddleware, setDescriptionToContext } from "./plugin/recording/recording.js";
 
@@ -35,9 +35,9 @@ export const main = async () => {
       username: "root",
       password: "root",
       database: "mydb",
-      synchronize: true,
+      synchronize: false,
       connectTimeoutMS: 500,
-      logging: true,
+      logging: false,
       entities: [
         //
         "src/app/gateway/gateway_*.ts",
@@ -58,7 +58,7 @@ export const main = async () => {
         return async (ctx, input) => {
           //
 
-          setDescriptionToContext(ctx, "hahahah");
+          setDescriptionToContext(ctx, "omar");
 
           const result = await inport(ctx, input);
 
@@ -100,10 +100,13 @@ export const main = async () => {
     const openApiObj = controllerToOpenAPI(controllerCollection);
     isDevMode && app.use("/openapi", (req, res) => res.json(openApiObj));
     isDevMode && app.use("/swagger", swaggerUi.serve, swaggerUi.setup(openApiObj));
+    // isDevMode && app.use("/redocly", redocly());
 
-    printRouteToConsole("", mainRouter);
+    printController(controllerCollection);
+    // printRouteToConsole("", mainRouter);
     console.log("swagger url", "http://localhost:3000/swagger");
-    console.log("opnapi url ", "http://localhost:3000/openapi");
+    console.log("openapi url ", "http://localhost:3000/openapi");
+    // console.log("redocly url ", "http://localhost:3000/redocly");
 
     await ds.initialize();
 

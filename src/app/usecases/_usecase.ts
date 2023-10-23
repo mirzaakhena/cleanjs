@@ -9,6 +9,7 @@ import { userCreate } from "./usecase_user_create.js";
 import { userGetAll } from "./usecase_user_getall.js";
 import { userRewardApproval } from "./usecase_user_reward_approval.js";
 import { userRewardGetAll } from "./usecase_user_reward_getall.js";
+import { userChangeStatus } from "./usecase_user_change_status.js";
 
 export const usecases: Usecases = {
   //
@@ -22,4 +23,5 @@ export const usecases: Usecases = {
   userRewardGetAll,
   userGetAll,
   userCreate,
+  userChangeStatus,
 };

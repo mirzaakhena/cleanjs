@@ -22,16 +22,10 @@ const html = `<!DOCTYPE html>
     </style>
   </head>
   <body>
-    <div id="redoc-container"></div>
-    <script nonce='[[nonce]]' src="https://unpkg.com/redoc@latest/bundles/redoc.standalone.js"> </script>
+    <div id="redoc-container"></div>  
+    <redoc spec-url="[[spec-url]]"></redoc>
+    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>    
   </body>
-  <script>
-    Redoc.init(
-      "[[spec-url]]",
-      [[options]],
-      document.getElementById("redoc-container")
-    );
-  </script>
 </html>`;
 
 const redocHtml = (
@@ -54,7 +48,8 @@ export const redocly = () => {
 
     const options: Ioption = {
       title: "ReDoc",
-      specUrl: "http://petstore.swagger.io/v2/swagger.json",
+      specUrl: "https://salmongrizzledkeyboard.mirzaakhena.repl.co/json",
+      // specUrl: "http://petstore.swagger.io/v2/swagger.json",
     };
 
     res.type("html");

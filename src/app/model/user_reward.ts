@@ -1,6 +1,5 @@
 import { BaseFindManyFilter, Identifier } from "../../framework/repo.js";
-import { AdminID } from "./admin.js";
-import { Approval, ApprovalActionStatus, GetApprovalStatus } from "./approval.js";
+import { Approval } from "./approval.js";
 import { Reward } from "./reward.js";
 
 import { User, UserID } from "./user.js";

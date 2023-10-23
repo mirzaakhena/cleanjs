@@ -1,5 +1,4 @@
 import { BaseEntity, BaseFindManyFilter, Identifier } from "../../framework/repo.js";
-import { Tenant } from "./tenant.js";
 import { User } from "./user.js";
 
 // =============================================================================================================================

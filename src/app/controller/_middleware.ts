@@ -8,9 +8,6 @@ export const handleUser = () => {
 
     if (req.ctx) {
       req.ctx.data["userLogin"] = "zunan";
-      req.ctx.data["adminLogin"] = "omar";
-
-      setDescriptionToContext(req.ctx, "mirza");
     }
 
     return next();

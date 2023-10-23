@@ -1,6 +1,5 @@
 import { Usecase } from "../../framework/core.js";
 import { FindOneEntity, SaveEntity } from "../../framework/repo.js";
-import { AdminID } from "../model/admin.js";
 import { ApprovalActionStatus, ApprovalStatus } from "../model/approval.js";
 import { Reward, RewardID } from "../model/reward.js";
 import { User, UserID } from "../model/user.js";
@@ -15,11 +14,9 @@ type Outport = {
   saveReward: SaveEntity<Reward, RewardID>;
   saveUser: SaveEntity<User, UserID>;
   saveUserPoint: SaveEntity<UserPoint, UserPointID>;
-  // sendEmail: SendEmail;
 };
 
 export type InportRequest = {
-  adminID: AdminID;
   userRewardID: UserRewardID;
   newUserPointID: UserPointID;
   now: Date;
@@ -53,7 +50,7 @@ export const userRewardApproval: Usecase<Outport, InportRequest, InportResponse>
       }
 
       // update status
-      const status = objUR.updateStatus!(req.now, req.adminID, req.status);
+      const status = objUR.updateStatus!(req.now, req.status);
       await o.saveUserReward(ctx, objUR);
 
       // kalau di reject langsung keluar saja
@@ -81,7 +78,6 @@ export const userRewardApproval: Usecase<Outport, InportRequest, InportResponse>
           objUP.id = req.newUserPointID;
           objUP.user = objUR.user;
           objUP.createdDate = req.now;
-          // tenant: objUS.tenant,
           objUP.point = -objUR.reward.point;
         }
         await o.saveUserPoint(ctx, objUP);

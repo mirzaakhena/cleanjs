@@ -14,21 +14,13 @@ export const controllerUser: HTTPData[] = [
     response: {
       200: {
         items: {
-          type: "array",
+          type: "array_of_object",
           properties: {
             id: { type: "string", description: "" },
+            name: { type: "string", description: "" },
             createdDate: { type: "string", description: "" },
-            title: { type: "string", description: "" },
-            description: { type: "string", description: "" },
-            point: { type: "number", description: "", default: 0 },
-            stock: { type: "number", description: "", default: 0 },
-            image: {
-              type: "object",
-              properties: {
-                name: { type: "string", description: "image name" },
-                url: { type: "string", description: "url of image" },
-              },
-            },
+            totalPoints: { type: "string", description: "" },
+            status: { type: "string", description: "" },
           },
         },
         count: { type: "number", default: 0 },
@@ -43,6 +35,7 @@ export const controllerUser: HTTPData[] = [
     tags: ["user"],
     body: {
       name: { type: "string", default: "mirza", description: "name of the user" },
+      hobbies: { type: "array_of_string", description: "" },
     },
     local: {
       newUserID: { funcName: "randomString" },
@@ -51,6 +44,28 @@ export const controllerUser: HTTPData[] = [
     response: {
       200: {
         id: { type: "string", description: "id of new user" },
+      },
+      400: {
+        message: { type: "string", description: "error message" },
+      },
+    },
+  },
+  {
+    description: "Change User Status",
+    method: "put",
+    route: "/api/v1/user/:userID/status",
+    usecase: "userChangeStatus",
+    tags: ["user"],
+    params: {
+      userID: { type: "string", description: "id of user", default: "0" },
+    },
+    body: {
+      status: { type: "string", enum: ["ACTIVE", "NON_ACTIVE"], description: "status of user" },
+    },
+    response: {
+      200: {
+        id: { type: "string", description: "id of user" },
+        status: { type: "string", description: "status of user" },
       },
       400: {
         message: { type: "string", description: "error message" },

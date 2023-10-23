@@ -1,5 +1,5 @@
 import express from "express";
-import { generateID } from "../utility.js";
+import { camelToPascalWithSpace, generateID } from "../utility.js";
 import { Context, createController, getContext } from "./core.js";
 
 export type HTTPDataResponse = {
@@ -53,7 +53,18 @@ export const extractBoolean = (value: any): boolean | undefined => {
   return value === "true" ? true : value === "false" ? false : undefined;
 };
 
-export type DataType = "string" | "date" | "boolean" | "number" | "object" | "array" | "array_of_object" | "array_of_number" | "array_of_string";
+export type DataType =
+  | "string" //
+  | "date" //
+  | "boolean" //
+  | "number" //
+  | "object" //
+  | "array_of_object" //
+  | "array_of_number" //
+  | "array_of_string" //
+  | "array_of_boolean" //
+  | "array_of_date"; //
+// | "array_of_array"; //
 
 export type QueryType = {
   type: DataType;
@@ -86,7 +97,6 @@ export const simpleController = <T = any>(
   //
   router: express.IRouter,
   httpData: HTTPData
-  // bindRequest?: (req: express.Request, filledInput: T) => T
 ) => {
   //
   return createController([httpData.usecase], (x) => {
@@ -135,8 +145,6 @@ export const simpleController = <T = any>(
             [key]: checkLocalData(ctx, key, httpData.local[key]),
           } as T;
         }
-
-        // payload = bindRequest ? bindRequest(req, payload as T) : payload;
 
         const result = await x[httpData.usecase](ctx, payload);
         res.json(result);
@@ -204,40 +212,65 @@ const checkLocalData = (ctx: Context, key: string, ft: FuncType): any => {
   throw new Error(`unknown function ${ft.funcName}`);
 };
 
-// TODO move it to utility
-export const printRouteToConsole = (url: string, router: express.Router) => {
-  //
+export const printController = (httpDatas: HTTPData[]) => {
+  let maxLengthRoute = 0;
+  let maxLengthUsecase = 0;
+  httpDatas.forEach((x) => {
+    if (maxLengthRoute < x.route.toString().length) {
+      maxLengthRoute = x.route.toString().length;
+    }
 
-  let route;
-  let routes: any = [];
+    const usecase = camelToPascalWithSpace(x.usecase.toString());
 
-  let maxLength = 0;
-
-  router.stack.forEach(function (middleware) {
-    if (middleware.route) {
-      // routes registered directly on the app
-      routes.push(middleware.route);
-      if (maxLength < middleware.route.path.toString().length) {
-        maxLength = middleware.route.path.toString().length;
-      }
-    } else if (middleware.name === "router") {
-      // router middleware
-      middleware.handle.stack.forEach(function (handler: any) {
-        route = handler.route;
-        route && routes.push(route);
-      });
+    if (maxLengthUsecase < usecase.length) {
+      maxLengthUsecase = usecase.length;
     }
   });
 
   console.table(
-    routes.map((r: any) => {
-      return {
-        method: Object.keys(r.methods)[0].padStart(6).toUpperCase(),
-        path: `${url}${r.path.toString().padEnd(maxLength).substring(0)}`,
-      };
-    })
+    httpDatas.map((x) => ({
+      //
+      method: x.method.padStart(6).toUpperCase(),
+      route: x.route.toString().padEnd(maxLengthRoute).substring(0),
+      usecase: camelToPascalWithSpace(x.usecase).padEnd(maxLengthUsecase).substring(0),
+    }))
   );
 };
+
+// TODO move it to utility
+// export const printRouteToConsole = (url: string, router: express.Router) => {
+//   //
+
+//   let route;
+//   let routes: any = [];
+
+//   let maxLength = 0;
+
+//   router.stack.forEach(function (middleware) {
+//     if (middleware.route) {
+//       // routes registered directly on the app
+//       routes.push(middleware.route);
+//       if (maxLength < middleware.route.path.toString().length) {
+//         maxLength = middleware.route.path.toString().length;
+//       }
+//     } else if (middleware.name === "router") {
+//       // router middleware
+//       middleware.handle.stack.forEach(function (handler: any) {
+//         route = handler.route;
+//         route && routes.push(route);
+//       });
+//     }
+//   });
+
+//   console.table(
+//     routes.map((r: any) => {
+//       return {
+//         method: Object.keys(r.methods)[0].padStart(6).toUpperCase(),
+//         path: `${url}${r.path.toString().padEnd(maxLength).substring(0)}`,
+//       };
+//     })
+//   );
+// };
 
 // // Sample how to create basic controller
 // createController(["approvalFlow"], (x) => {
