@@ -13,17 +13,20 @@ export const controllerUser: HTTPData[] = [
     },
     response: {
       200: {
-        items: {
-          type: "array_of_object",
-          properties: {
-            id: { type: "string", description: "" },
-            name: { type: "string", description: "" },
-            createdDate: { type: "string", description: "" },
-            totalPoints: { type: "string", description: "" },
-            status: { type: "string", description: "" },
+        description: "Success",
+        content: {
+          items: {
+            type: "array_of_object",
+            properties: {
+              id: { type: "string", description: "" },
+              name: { type: "string", description: "" },
+              createdDate: { type: "string", description: "" },
+              totalPoints: { type: "string", description: "" },
+              status: { type: "string", description: "" },
+            },
           },
+          count: { type: "number", default: 0 },
         },
-        count: { type: "number", default: 0 },
       },
     },
   },
@@ -35,7 +38,6 @@ export const controllerUser: HTTPData[] = [
     tag: "user",
     body: {
       name: { type: "string", default: "mirza", description: "name of the user" },
-      hobbies: { type: "array_of_string", description: "" },
     },
     local: {
       newUserID: { funcName: "randomString" },
@@ -43,10 +45,16 @@ export const controllerUser: HTTPData[] = [
     },
     response: {
       200: {
-        id: { type: "string", description: "id of new user" },
+        description: "Success",
+        content: {
+          id: { type: "string", description: "id of new user" },
+        },
       },
       400: {
-        message: { type: "string", description: "error message" },
+        description: "Fail",
+        content: {
+          message: { type: "string", description: "error message" },
+        },
       },
     },
   },
@@ -64,11 +72,17 @@ export const controllerUser: HTTPData[] = [
     },
     response: {
       200: {
-        id: { type: "string", description: "id of user" },
-        status: { type: "string", description: "status of user" },
+        description: "Success",
+        content: {
+          id: { type: "string", description: "id of user" },
+          status: { type: "string", description: "status of user" },
+        },
       },
       400: {
-        message: { type: "string", description: "error message" },
+        description: "Fail",
+        content: {
+          message: { type: "string", description: "error message" },
+        },
       },
     },
   },

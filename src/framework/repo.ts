@@ -5,11 +5,11 @@ export type BaseFindManyFilter = {
   size: number;
 };
 
+export type Identifier = string;
+
 export class BaseEntity<T extends Identifier> {
   id: T;
 }
-
-export type Identifier = string;
 
 export type SaveEntity<T, ID extends Identifier> = Inport<T, ID>;
 

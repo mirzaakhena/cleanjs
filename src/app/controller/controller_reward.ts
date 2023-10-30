@@ -13,25 +13,28 @@ export const controllerReward: HTTPData[] = [
     },
     response: {
       200: {
-        items: {
-          type: "array_of_object",
-          properties: {
-            id: { type: "string", description: "" },
-            createdDate: { type: "string", description: "" },
-            title: { type: "string", description: "" },
-            description: { type: "string", description: "" },
-            point: { type: "number", description: "", default: 0 },
-            stock: { type: "number", description: "", default: 0 },
-            image: {
-              type: "object",
-              properties: {
-                name: { type: "string", description: "image name" },
-                url: { type: "string", description: "url of image" },
+        description: "Success",
+        content: {
+          items: {
+            type: "array_of_object",
+            properties: {
+              id: { type: "string", description: "" },
+              createdDate: { type: "string", description: "" },
+              title: { type: "string", description: "" },
+              description: { type: "string", description: "" },
+              point: { type: "number", description: "", default: 0 },
+              stock: { type: "number", description: "", default: 0 },
+              image: {
+                type: "object",
+                properties: {
+                  name: { type: "string", description: "image name" },
+                  url: { type: "string", description: "url of image" },
+                },
               },
             },
           },
+          count: { type: "number", default: 0 },
         },
-        count: { type: "number", default: 0 },
       },
     },
   },
@@ -52,6 +55,14 @@ export const controllerReward: HTTPData[] = [
         properties: {
           name: { type: "string", description: "image name" },
           url: { type: "string", description: "url of image" },
+          zzz: {
+            type: "object",
+            properties: {
+              aaaa: {
+                type: "number",
+              },
+            },
+          },
         },
       },
     },
@@ -61,10 +72,16 @@ export const controllerReward: HTTPData[] = [
     },
     response: {
       200: {
-        id: { type: "string", description: "id of new reward" },
+        description: "Success",
+        content: {
+          id: { type: "string", description: "id of new reward" },
+        },
       },
       400: {
-        message: { type: "string", description: "error message" },
+        description: "Fail",
+        content: {
+          message: { type: "string", description: "error message" },
+        },
       },
     },
   },
@@ -86,10 +103,16 @@ export const controllerReward: HTTPData[] = [
     },
     response: {
       200: {
-        id: { type: "string", description: "id of new reward" },
+        description: "Success",
+        content: {
+          id: { type: "string", description: "id of new reward" },
+        },
       },
       400: {
-        message: { type: "string", description: "error message" },
+        description: "Fail",
+        content: {
+          message: { type: "string", description: "error message" },
+        },
       },
     },
   },

@@ -1,20 +1,23 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import { UserID, UserStatus } from "../model/user.js";
+import { User as IUser, UserID, UserStatus } from "../model/user.js";
 
 @Entity()
-export class User {
+export class User extends IUser {
   //
 
   @PrimaryColumn({ type: "varchar", length: 20 })
-  id: UserID;
+  declare id: UserID;
+
+  @Column({ type: "timestamp", nullable: true })
+  declare createdDate?: Date;
 
   @Column({ type: "varchar", length: 50 })
-  name: string;
+  declare name: string;
 
   @Column({ type: "int" })
-  totalPoints: number;
+  declare totalPoints: number;
 
   @Column({ type: "varchar", length: 10 })
-  status?: UserStatus;
+  declare status?: UserStatus;
   //
 }

@@ -9,7 +9,6 @@ export class UserPoint extends BaseEntity<UserPointID> {
   user: User;
   point: number;
   createdDate: Date;
-  // tenant: Tenant;
   // TODO kalau ditambah karena apa?
   // TODO kalau dikurangi dipakai untuk redeem apa?
 }

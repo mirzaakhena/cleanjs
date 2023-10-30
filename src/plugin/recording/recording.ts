@@ -86,6 +86,7 @@ export type RecordFunction = {
   output?: any;
   error?: any;
   functions?: RecordFunction[];
+  duration?: number; // TODO: count duration
 };
 
 export type RecordAndStorePayload = Omit<RecordFunction, "functions">;
@@ -136,6 +137,7 @@ export const recordGateway = (ctx: Context, payload: RecordAndStorePayload) => {
     output: payload.output,
     description: payload.description,
     error: payload.error,
+    duration: payload.duration,
   });
 
   return payload.output;
@@ -155,6 +157,7 @@ export const recordController = async (ctx: Context, payload: RecordAndStorePayl
   recording.error = payload.error;
   recording.input = payload.input;
   recording.output = payload.output;
+  recording.duration = payload.duration;
 
   await recordingState.saveRecording!(ctx, {
     ...recording,
@@ -203,6 +206,8 @@ export const recordingMiddleware: () => Middleware = () => {
 
       //
 
+      const start = Date.now();
+
       if (funcType === "controller") {
         //
         prepareRecorder(ctx);
@@ -215,6 +220,7 @@ export const recordingMiddleware: () => Middleware = () => {
             input,
             output: result,
             description: getDescriptionFromContext(ctx),
+            duration: Date.now() - start,
           });
 
           return result;
@@ -229,6 +235,7 @@ export const recordingMiddleware: () => Middleware = () => {
             input,
             error,
             description: getDescriptionFromContext(ctx),
+            duration: Date.now() - start,
           });
 
           throw error;
@@ -245,6 +252,7 @@ export const recordingMiddleware: () => Middleware = () => {
             input,
             output: result,
             description: getDescriptionFromContext(ctx),
+            duration: Date.now() - start,
           });
 
           return result;
@@ -259,6 +267,7 @@ export const recordingMiddleware: () => Middleware = () => {
             input,
             error,
             description: getDescriptionFromContext(ctx),
+            duration: Date.now() - start,
           });
 
           throw error;

@@ -23,8 +23,12 @@ export class User extends BaseEntity<UserID> {
     this.totalPoints! -= point;
   }
 
-  changeStatus(status: UserStatus) {
-    this.status! = status;
+  changeStatus(userStatus: UserStatus) {
+    const statusEnum = ["ACTIVE", "NON_ACTIVE"];
+    if (!statusEnum.some((status) => userStatus === status)) {
+      throw new Error(`status must be one of ${statusEnum}`);
+    }
+    this.status! = userStatus;
   }
 }
 

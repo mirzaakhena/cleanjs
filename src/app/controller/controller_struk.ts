@@ -13,34 +13,37 @@ export const controllerStruk: HTTPData[] = [
     },
     response: {
       200: {
-        items: {
-          type: "array_of_object",
-          properties: {
-            id: { type: "string" },
-            status: { type: "string" },
-            approvalDate: { type: "string" },
-            createdDate: { type: "string", description: "" },
-            billNumber: { type: "string", description: "" },
-            totalTransaksi: { type: "number", default: 0, description: "" },
-            user: {
-              type: "object",
-              properties: {
-                id: { type: "string", default: "123", description: "id of user" },
-                name: { type: "string", default: "aaa", description: "name of user" },
-                createdDate: { type: "string", description: "registered user date" },
-                totalPoints: { type: "number", default: 0, description: "point own by user" },
+        description: "Success",
+        content: {
+          items: {
+            type: "array_of_object",
+            properties: {
+              id: { type: "string" },
+              status: { type: "string" },
+              approvalDate: { type: "string" },
+              createdDate: { type: "string", description: "" },
+              billNumber: { type: "string", description: "" },
+              totalTransaksi: { type: "number", default: 0, description: "" },
+              user: {
+                type: "object",
+                properties: {
+                  id: { type: "string", default: "123", description: "id of user" },
+                  name: { type: "string", default: "aaa", description: "name of user" },
+                  createdDate: { type: "string", description: "registered user date" },
+                  totalPoints: { type: "number", default: 0, description: "point own by user" },
+                },
               },
-            },
-            screenshot: {
-              type: "object",
-              properties: {
-                name: { type: "string", description: "image name" },
-                url: { type: "string", description: "url of image" },
+              screenshot: {
+                type: "object",
+                properties: {
+                  name: { type: "string", description: "image name" },
+                  url: { type: "string", description: "url of image" },
+                },
               },
             },
           },
+          count: { type: "number", default: 0 },
         },
-        count: { type: "number", default: 0 },
       },
     },
   },
@@ -74,6 +77,9 @@ export const controllerStruk: HTTPData[] = [
     header: {
       userID: { type: "string" },
     },
+    query: {
+      somthing: { type: "string" },
+    },
     local: {
       newStrukID: { funcName: "randomString" },
       now: { funcName: "dateNow" },
@@ -81,10 +87,16 @@ export const controllerStruk: HTTPData[] = [
     },
     response: {
       200: {
-        id: { type: "string", description: "id of new struk" },
+        description: "Success",
+        content: {
+          id: { type: "string", description: "id of new struk" },
+        },
       },
       400: {
-        message: { type: "string", description: "error message" },
+        description: "Fail",
+        content: {
+          message: { type: "string", description: "error message" },
+        },
       },
     },
   },
@@ -98,7 +110,7 @@ export const controllerStruk: HTTPData[] = [
       strukID: { type: "string", description: "id of struk" },
     },
     body: {
-      approvalStatus: { type: "string", default: "APPROVE", enum: ["APPROVE", "REJECT"] }, // TODO remove default later
+      status: { type: "string", default: "APPROVE", enum: ["APPROVE", "REJECT"] }, // TODO remove default later
     },
     local: {
       newUserPointID: { funcName: "randomString" },
@@ -106,11 +118,17 @@ export const controllerStruk: HTTPData[] = [
     },
     response: {
       200: {
-        id: { type: "string", description: "id of struk" },
-        status: { type: "string", description: "status struk" },
+        description: "Success",
+        content: {
+          id: { type: "string", description: "id of struk" },
+          status: { type: "string", description: "status struk" },
+        },
       },
       400: {
-        message: { type: "string", description: "error message" },
+        description: "Fail",
+        content: {
+          message: { type: "string", description: "error message" },
+        },
       },
     },
   },

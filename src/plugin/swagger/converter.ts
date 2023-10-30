@@ -1,5 +1,5 @@
 import { query } from "express";
-import { HTTPData, QueryType } from "../../framework/controller_express.js";
+import { HTTPData, QueryType, ResponseCode, ResponseType } from "../../framework/controller_express.js";
 import { OpenAPIObject, OperationObject, ParameterObject, PathItemObject, ReferenceObject, RequestBodyObject, ResponseObject, SchemaObject } from "./schema.js";
 import { camelToPascalWithSpace } from "../../utility.js";
 
@@ -222,7 +222,7 @@ function handleProperties(input: Record<string, QueryType>) {
   return schemaObj;
 }
 
-export function handleResponse(input: Record<number, Record<string, QueryType>>) {
+export function handleResponse(input: Record<ResponseCode, ResponseType>) {
   type ResponseByCode = {
     [statusCode: string]: ResponseObject;
   };
@@ -235,12 +235,13 @@ export function handleResponse(input: Record<number, Record<string, QueryType>>)
     responseByCode = {
       ...responseByCode,
       [key]: {
-        description: "", // TODO: input later
+        description: field.description, // TODO: input later
         content: {
           "application/json": {
             schema: {
               type: "object",
-              properties: handleProperties(field),
+
+              properties: handleProperties(field.content),
             },
           },
         },

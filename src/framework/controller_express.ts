@@ -1,16 +1,12 @@
 import express from "express";
-import { camelToPascalWithSpace, generateID } from "../utility.js";
-import { Context, createController, getContext } from "./core.js";
+import { camelToPascalWithSpace } from "../utility.js";
+import { Context, Inport, createController, getContext } from "./core.js";
 
 export type HTTPDataResponse = {
   headers: Record<string, string>;
   statusCode: number;
   body: any;
 };
-
-export type ResponseCode = 200 | 201 | 400 | 401 | number;
-
-export type Methods = "all" | "get" | "post" | "put" | "delete" | "patch" | "options" | "head";
 
 export type RequestWithContext = express.Request & {
   ctx?: Context;
@@ -53,6 +49,10 @@ export const extractBoolean = (value: any): boolean | undefined => {
   return value === "true" ? true : value === "false" ? false : undefined;
 };
 
+export type ResponseCode = 200 | 201 | 400 | 401 | number;
+
+export type Methods = "all" | "get" | "post" | "put" | "delete" | "patch" | "options" | "head";
+
 export type DataType =
   | "string" //
   | "date" //
@@ -79,6 +79,11 @@ export type FuncName = "dateNow" | "assign" | "randomString" | "contextData";
 
 export type FuncType = { funcName: FuncName; input?: any };
 
+export type ResponseType = {
+  description?: string;
+  content: Record<string, QueryType>;
+};
+
 export type HTTPData = {
   description?: string;
   usecase: string;
@@ -90,13 +95,14 @@ export type HTTPData = {
   header?: Record<string, QueryType>;
   body?: Record<string, QueryType>;
   local?: Record<string, FuncType>;
-  response?: Record<ResponseCode, Record<string, QueryType>>;
+  response?: Record<ResponseCode, ResponseType>;
 };
 
-export const simpleController = <T = any>(
+const simpleController = <T = any>(
   //
   router: express.IRouter,
-  httpData: HTTPData
+  httpData: HTTPData,
+  localFunctions: Record<string, Inport>
 ) => {
   //
   return createController([httpData.usecase], (x) => {
@@ -140,9 +146,15 @@ export const simpleController = <T = any>(
 
         for (const key in httpData.local) {
           //
+
+          const func = localFunctions[key];
+          if (!func) {
+            throw new Error(`local function ${key} is not defined`);
+          }
+
           payload = {
             ...payload,
-            [key]: checkLocalData(ctx, key, httpData.local[key]),
+            [key]: func(ctx, httpData.local[key]), // checkLocalData(ctx, key, httpData.local[key]),
           } as T;
         }
 
@@ -159,8 +171,8 @@ export const simpleController = <T = any>(
   });
 };
 
-export const collectSimpleController = (router: express.Router, httpDatas: HTTPData[]) => {
-  return httpDatas.map((x) => simpleController(router, x));
+export const collectSimpleController = (router: express.Router, httpDatas: HTTPData[], localFunctions: Record<string, Inport>) => {
+  return httpDatas.map((x) => simpleController(router, x, localFunctions));
 };
 
 const checkDataType = (pd: QueryType, value: any): any => {
@@ -183,33 +195,6 @@ const checkDataType = (pd: QueryType, value: any): any => {
   }
 
   return undefined;
-};
-
-const checkLocalData = (ctx: Context, key: string, ft: FuncType): any => {
-  if (ft.funcName === "dateNow") {
-    return new Date();
-  }
-
-  if (ft.funcName === "randomString") {
-    return generateID((ft.input as number) ?? undefined);
-  }
-
-  if (ft.funcName === "contextData") {
-    if (ft.input === undefined) {
-      throw new Error(`unknown input for function ${ft.funcName} key ${key}`);
-    }
-
-    return ctx.data[ft.input as string];
-  }
-
-  if (ft.funcName === "assign") {
-    if (ft.input === undefined) {
-      throw new Error(`unknown input for function ${ft.funcName} key ${key}`);
-    }
-    return ft.input;
-  }
-
-  throw new Error(`unknown function ${ft.funcName}`);
 };
 
 export const printController = (httpDatas: HTTPData[]) => {

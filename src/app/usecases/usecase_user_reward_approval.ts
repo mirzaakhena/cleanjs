@@ -50,7 +50,7 @@ export const userRewardApproval: Usecase<Outport, InportRequest, InportResponse>
       }
 
       // update status
-      const status = objUR.updateStatus!(req.now, req.status);
+      const status = objUR.updateStatus(req.now, req.status);
       await o.saveUserReward(ctx, objUR);
 
       // kalau di reject langsung keluar saja
@@ -60,7 +60,7 @@ export const userRewardApproval: Usecase<Outport, InportRequest, InportResponse>
 
       // reduce reward stock
       {
-        objUR.reward.reduceStock!();
+        objUR.reward.reduceStock();
         await o.saveReward(ctx, objUR.reward);
       }
 

@@ -20,12 +20,14 @@ export const transactionMiddleware: (ds: DataSource) => Middleware = (ds: DataSo
       return await ds.transaction(async (em) => {
         //
 
-        console.log(">>>>>> START TRANSACTION", name);
-
         try {
+          //
+
+          console.log(">>>>>> START    TRANSACTION", name);
+
           const result = await inport({ ...ctx, data: { ...ctx.data, [TRANSACTION_FIELD]: em } }, input);
 
-          console.log(">>>>>> COMMIT TRANSACTION", name);
+          console.log(">>>>>> COMMIT   TRANSACTION", name);
 
           return result;
 
@@ -33,6 +35,7 @@ export const transactionMiddleware: (ds: DataSource) => Middleware = (ds: DataSo
         } catch (error: any) {
           //
           console.log(">>>>>> ROLLBACK TRANSACTION", name);
+
           throw error;
         }
       });

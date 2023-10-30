@@ -16,7 +16,7 @@ export type InportRequest = {
   now: Date;
   newUserPointID: UserPointID;
   strukID: StrukID;
-  approvalStatus: ApprovalActionStatus;
+  status: ApprovalActionStatus;
 };
 
 export type InportResponse = {
@@ -51,7 +51,7 @@ export const strukApproval: Usecase<Outport, InportRequest, InportResponse> = {
       }
 
       // ubah status Struk
-      const status = objUS.updateStatus(req.now, req.approvalStatus);
+      const status = objUS.updateStatus(req.now, req.status);
       await o.saveStruk(ctx, objUS);
 
       // Jika di reject langsung keluar saja
@@ -70,7 +70,6 @@ export const strukApproval: Usecase<Outport, InportRequest, InportResponse> = {
           objUP.id = req.newUserPointID;
           objUP.user = objUS.user;
           objUP.createdDate = req.now;
-          // tenant: objUS.tenant,
           objUP.point = point;
         }
         await o.saveUserPoint(ctx, objUP);
