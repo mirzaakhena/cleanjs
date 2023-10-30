@@ -1,17 +1,7 @@
-import { generateID } from "../utility.js";
-
 export type Context<T = any> = {
   data: T;
   traceId: string;
   date: Date;
-};
-
-export const getContext = <T = any>(data: T): Context<T> => {
-  return {
-    data,
-    date: new Date(),
-    traceId: generateID(),
-  };
 };
 
 export type Inport<REQUEST = any, RESPONSE = any> = (ctx: Context, request: REQUEST) => Promise<RESPONSE>;

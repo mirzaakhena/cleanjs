@@ -17,7 +17,7 @@ import { gateways } from "./app/gateway/_gateway.js";
 import { usecases } from "./app/usecases/_usecase.js";
 import { controllerToOpenAPI } from "./plugin/swagger/middleware_swagger-ui.js";
 import { groupingControllerWithTag } from "./plugin/ui/group_controller.js";
-import { generateID } from "./utility.js";
+import { undeterministicFunctions } from "./app/controller/_undeterministic.js";
 
 export const main = async () => {
   //
@@ -62,18 +62,6 @@ export const main = async () => {
       isDevMode && frameworkMiddleware.push(middlewareSample);
       frameworkMiddleware.push(transactionMiddleware(ds));
     }
-
-    const undeterministicFunctions = {
-      dateNow: async (ctx: Context, _: void) => {
-        return new Date();
-      },
-      randomString: async (ctx: Context, charCount?: number) => {
-        return generateID(charCount ?? undefined);
-      },
-      contextData: async (ctx: Context, input: string) => {
-        return ctx.data[input];
-      },
-    };
 
     const controllers = [...collectSimpleController(mainRouter, controllerCollection, undeterministicFunctions)];
 

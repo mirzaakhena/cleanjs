@@ -1,6 +1,6 @@
 import express from "express";
-import { camelToPascalWithSpace } from "../utility.js";
-import { Context, Inport, createController, getContext } from "./core.js";
+import { camelToPascalWithSpace, generateID } from "../utility.js";
+import { Context, Inport, createController } from "./core.js";
 
 export type HTTPDataResponse = {
   headers: Record<string, string>;
@@ -14,7 +14,11 @@ export type RequestWithContext = express.Request & {
 
 export const middlewareContext = () => {
   return (req: RequestWithContext, res: express.Response, next: express.NextFunction) => {
-    req.ctx = getContext({});
+    req.ctx = {
+      data: {},
+      date: new Date(),
+      traceId: generateID(),
+    };
     res.set("TraceId", req.ctx.traceId);
     return next();
   };

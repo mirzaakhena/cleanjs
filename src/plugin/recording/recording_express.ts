@@ -1,6 +1,7 @@
 import express from "express";
-import { Outport, RequestType, UsecaseWithGatewayInstance, getContext } from "../../framework/core.js";
 import { extractArrayString, extractBoolean, extractNumber } from "../../framework/controller_express.js";
+import { Outport, RequestType, UsecaseWithGatewayInstance } from "../../framework/core.js";
+import { generateID } from "../../utility.js";
 import {
   DataRecordingJourney,
   DeleteAllRecording,
@@ -16,7 +17,14 @@ import {
   createBaseFunc,
   recordingState,
 } from "./recording.js";
-import { generateID } from "../../utility.js";
+
+const getContext = (data: any) => {
+  return {
+    data,
+    date: new Date(),
+    traceId: generateID(),
+  };
+};
 
 export const handleRecording = (
   router: express.IRouter,
