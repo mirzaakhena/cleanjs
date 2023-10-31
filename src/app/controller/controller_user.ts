@@ -16,13 +16,16 @@ export const controllerUser: HTTPData[] = [
         description: "Success",
         content: {
           items: {
-            type: "array_of_object",
-            properties: {
-              id: { type: "string", description: "" },
-              name: { type: "string", description: "" },
-              createdDate: { type: "string", description: "" },
-              totalPoints: { type: "string", description: "" },
-              status: { type: "string", description: "" },
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "string", description: "" },
+                name: { type: "string", description: "" },
+                createdDate: { type: "string", description: "" },
+                totalPoints: { type: "string", description: "" },
+                status: { type: "string", description: "" },
+              },
             },
           },
           count: { type: "number", default: 0 },
@@ -38,6 +41,20 @@ export const controllerUser: HTTPData[] = [
     tag: "user",
     body: {
       name: { type: "string", default: "mirza", description: "name of the user" },
+      hobbies: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            dilaut: {
+              type: "string",
+            },
+            didarat: {
+              type: "string",
+            },
+          },
+        },
+      },
     },
     local: {
       newUserID: { funcName: "randomString" },
@@ -68,7 +85,7 @@ export const controllerUser: HTTPData[] = [
       userID: { type: "string", description: "id of user", default: "0" },
     },
     body: {
-      status: { type: "string", enum: ["ACTIVE", "NON_ACTIVE"], description: "status of user" },
+      status: { type: "string", enum: ["ACTIVE", "NON_ACTIVE"], description: "status of user", default: "NON_ACTIVE" },
     },
     response: {
       200: {

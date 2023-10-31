@@ -1,5 +1,5 @@
 import { query } from "express";
-import { HTTPData, QueryType, ResponseCode, ResponseType } from "../../framework/controller_express.js";
+import { HTTPData, InputType, ResponseCode, ResponseType } from "../../framework/controller_express.js";
 import { OpenAPIObject, OperationObject, ParameterObject, PathItemObject, ReferenceObject, RequestBodyObject, ResponseObject, SchemaObject } from "./schema.js";
 import { camelToPascalWithSpace } from "../../utility.js";
 
@@ -77,7 +77,7 @@ function extractPath(input: HTTPData, openApiObj: OpenAPIObject): ParameterObjec
               description: `${details.description}xxx` || undefined, // Handle undefined description
               default: details.default,
               required: details.required || undefined,
-              schema: input.query ? handleProperties(input.query) : undefined,
+              schema: input.query ? handlePropertiesObject(input.query) : undefined,
             } as ParameterObject)
         )
       : []),
@@ -123,100 +123,164 @@ function extractPath(input: HTTPData, openApiObj: OpenAPIObject): ParameterObjec
   return params;
 }
 
-function handleProperties(input: Record<string, QueryType>) {
+function handlePropertiesObject(input: InputType) {
+  //
+
   let schemaObj: Record<string, SchemaObject> = {};
 
   for (const key in input) {
+    //
+
     const field = input[key];
+
+    const basicField = {
+      type: field.type === "date" ? "string" : field.type,
+      default: field.default,
+      description: field.description,
+    };
+
+    // if (field.type === "string" || field.type === "number" || field.type === "boolean" || field.type === "date") {
+    //   schemaObj = {
+    //     ...schemaObj,
+    //     [key]: {
+    //       ...basicField,
+    //     } as SchemaObject,
+    //   };
+    //   continue;
+    // }
 
     if (field.type === "object" && field.properties) {
       schemaObj = {
         ...schemaObj,
         [key]: {
-          type: field.type,
-          default: field.default,
-          description: field.description,
-          properties: handleProperties(field.properties),
+          ...basicField,
+          properties: handlePropertiesObject(field.properties),
         } as SchemaObject,
       };
       continue;
     }
 
-    if (!field.type.startsWith("array")) {
+    if (field.type === "array") {
       schemaObj = {
         ...schemaObj,
         [key]: {
-          type: field.type === "number" ? "integer" : field.type,
-          format: field.type === "number" ? "int64" : undefined,
-          default: field.default,
-          description: field.description,
-          enum: field.enum || undefined,
-        } as SchemaObject,
-      };
-      continue;
-    }
-
-    if (field.type === "array_of_object" && field.properties) {
-      schemaObj = {
-        ...schemaObj,
-        [key]: {
-          type: "array",
-          default: [],
-          description: field.description,
+          ...basicField,
           items: {
-            type: "object",
-            properties: handleProperties(field.properties),
+            type: field.items.type,
+            properties: field.items.type === "object" ? handlePropertiesObject(field.items.properties) : undefined,
           },
         } as SchemaObject,
       };
       continue;
     }
 
-    if (field.type === "array_of_string") {
+    {
       schemaObj = {
         ...schemaObj,
         [key]: {
-          type: "array",
-          default: [],
-          description: field.description,
-          items: {
-            type: "string",
-          },
+          ...basicField,
         } as SchemaObject,
       };
-      continue;
     }
+  }
 
-    if (field.type === "array_of_number") {
-      schemaObj = {
-        ...schemaObj,
-        [key]: {
-          type: "array",
-          default: [],
-          description: field.description,
-          items: {
-            type: "number",
-            format: "int64",
-          },
-        } as SchemaObject,
-      };
-      continue;
-    }
+  return schemaObj;
+}
 
-    if (field.type === "array_of_boolean") {
-      schemaObj = {
-        ...schemaObj,
-        [key]: {
-          type: "array",
-          default: [],
-          description: field.description,
-          items: {
-            type: "boolean",
-          },
-        } as SchemaObject,
-      };
-      continue;
-    }
+function handlePropertiesQuery(input: InputType) {
+  let schemaObj: Record<string, SchemaObject> = {};
+
+  for (const key in input) {
+    const field = input[key];
+
+    // if (field.type === "object" && field.properties) {
+    //   schemaObj = {
+    //     ...schemaObj,
+    //     [key]: {
+    //       type: field.type,
+    //       default: field.default,
+    //       description: field.description,
+    //       properties: handleProperties(field.properties),
+    //     } as SchemaObject,
+    //   };
+    //   continue;
+    // }
+
+    // if (!field.type.startsWith("array")) {
+    //   schemaObj = {
+    //     ...schemaObj,
+    //     [key]: {
+    //       type: field.type === "number" ? "integer" : field.type,
+    //       format: field.type === "number" ? "int64" : undefined,
+    //       default: field.default,
+    //       description: field.description,
+    //       enum: field.enum || undefined,
+    //     } as SchemaObject,
+    //   };
+    //   continue;
+    // }
+
+    // if (field.type === "array_of_object" && field.properties) {
+    //   schemaObj = {
+    //     ...schemaObj,
+    //     [key]: {
+    //       type: "array",
+    //       default: [],
+    //       description: field.description,
+    //       items: {
+    //         type: "object",
+    //         properties: handleProperties(field.properties),
+    //       },
+    //     } as SchemaObject,
+    //   };
+    //   continue;
+    // }
+
+    // if (field.type === "array_of_string") {
+    //   schemaObj = {
+    //     ...schemaObj,
+    //     [key]: {
+    //       type: "array",
+    //       default: [],
+    //       description: field.description,
+    //       items: {
+    //         type: "string",
+    //       },
+    //     } as SchemaObject,
+    //   };
+    //   continue;
+    // }
+
+    // if (field.type === "array_of_number") {
+    //   schemaObj = {
+    //     ...schemaObj,
+    //     [key]: {
+    //       type: "array",
+    //       default: [],
+    //       description: field.description,
+    //       items: {
+    //         type: "number",
+    //         format: "int64",
+    //       },
+    //     } as SchemaObject,
+    //   };
+    //   continue;
+    // }
+
+    // if (field.type === "array_of_boolean") {
+    //   schemaObj = {
+    //     ...schemaObj,
+    //     [key]: {
+    //       type: "array",
+    //       default: [],
+    //       description: field.description,
+    //       items: {
+    //         type: "boolean",
+    //       },
+    //     } as SchemaObject,
+    //   };
+    //   continue;
+    // }
   }
 
   return schemaObj;
@@ -240,8 +304,7 @@ export function handleResponse(input: Record<ResponseCode, ResponseType>) {
           "application/json": {
             schema: {
               type: "object",
-
-              properties: handleProperties(field.content),
+              properties: handlePropertiesObject(field.content),
             },
           },
         },
@@ -280,7 +343,7 @@ export function controllerToSwagger(input: HTTPData, openApiObj: OpenAPIObject) 
             "application/json": {
               schema: {
                 type: "object",
-                properties: handleProperties(input.body),
+                properties: handlePropertiesObject(input.body),
               },
             },
           },

@@ -16,28 +16,31 @@ export const controllerStruk: HTTPData[] = [
         description: "Success",
         content: {
           items: {
-            type: "array_of_object",
-            properties: {
-              id: { type: "string" },
-              status: { type: "string" },
-              approvalDate: { type: "string" },
-              createdDate: { type: "string", description: "" },
-              billNumber: { type: "string", description: "" },
-              totalTransaksi: { type: "number", default: 0, description: "" },
-              user: {
-                type: "object",
-                properties: {
-                  id: { type: "string", default: "123", description: "id of user" },
-                  name: { type: "string", default: "aaa", description: "name of user" },
-                  createdDate: { type: "string", description: "registered user date" },
-                  totalPoints: { type: "number", default: 0, description: "point own by user" },
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                status: { type: "string" },
+                approvalDate: { type: "string" },
+                createdDate: { type: "string", description: "" },
+                billNumber: { type: "string", description: "" },
+                totalTransaksi: { type: "number", default: 0, description: "" },
+                user: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string", default: "123", description: "id of user" },
+                    name: { type: "string", default: "aaa", description: "name of user" },
+                    createdDate: { type: "string", description: "registered user date" },
+                    totalPoints: { type: "number", default: 0, description: "point own by user" },
+                  },
                 },
-              },
-              screenshot: {
-                type: "object",
-                properties: {
-                  name: { type: "string", description: "image name" },
-                  url: { type: "string", description: "url of image" },
+                screenshot: {
+                  type: "object",
+                  properties: {
+                    name: { type: "string", description: "image name" },
+                    url: { type: "string", description: "url of image" },
+                  },
                 },
               },
             },

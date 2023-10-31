@@ -16,20 +16,23 @@ export const controllerUserPoint: HTTPData[] = [
         description: "Success",
         content: {
           items: {
-            type: "array_of_object",
-            properties: {
-              id: { type: "string" },
-              user: {
-                type: "object",
-                properties: {
-                  id: { type: "string", default: "123", description: "id of user" },
-                  name: { type: "string", default: "aaa", description: "name of user" },
-                  createdDate: { type: "string", description: "registered user date" },
-                  totalPoints: { type: "number", default: 0, description: "point own by user" },
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                user: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string", default: "123", description: "id of user" },
+                    name: { type: "string", default: "aaa", description: "name of user" },
+                    createdDate: { type: "string", description: "registered user date" },
+                    totalPoints: { type: "number", default: 0, description: "point own by user" },
+                  },
                 },
+                point: { type: "number", default: 0, description: "point of user" },
+                createdDate: { type: "string", description: "" },
               },
-              point: { type: "number", default: 0, description: "point of user" },
-              createdDate: { type: "string", description: "" },
             },
           },
           count: { type: "number", default: 0 },

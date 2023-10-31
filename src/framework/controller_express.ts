@@ -59,25 +59,18 @@ export type Methods = "all" | "get" | "post" | "put" | "delete" | "patch" | "opt
 
 export type DataType =
   | "string" //
-  | "date" //
   | "boolean" //
   | "number" //
-  | "object" //
-  | "array_of_object" //
-  | "array_of_number" //
-  | "array_of_string" //
-  | "array_of_boolean" //
-  | "array_of_date"; //
-// | "array_of_array"; //
+  | "array_of_string"; //
 
-export type QueryType = {
-  type: DataType;
-  enum?: string[];
-  properties?: Record<string, QueryType>;
-  default?: any;
-  description?: string;
-  required?: boolean;
-};
+// export type QueryType = {
+//   type: DataType;
+//   enum?: string[];
+//   properties?: Record<string, QueryType>;
+//   default?: any;
+//   description?: string;
+//   required?: boolean;
+// };
 
 export type FuncName = "dateNow" | "assign" | "randomString" | "contextData";
 
@@ -85,22 +78,55 @@ export type FuncType = { funcName: FuncName; input?: any };
 
 export type ResponseType = {
   description?: string;
-  content: Record<string, QueryType>;
+  summary?: string;
+  content: InputType;
 };
 
 export type HTTPData = {
   description?: string;
+  summary?: string;
   usecase: string;
   method: Methods;
   path: string;
   tag: string;
-  query?: Record<string, QueryType>;
-  param?: Record<string, QueryType>;
-  header?: Record<string, QueryType>;
-  body?: Record<string, QueryType>;
+  query?: InputType; // Record<string, QueryType>;
+  param?: InputType; // Record<string, QueryType>;
+  header?: InputType; //Record<string, QueryType>;
+  body?: InputType;
   local?: Record<string, FuncType>;
   response?: Record<ResponseCode, ResponseType>;
 };
+
+//================================================================
+
+type GeneralInfoType = {
+  default?: any;
+  summary?: string;
+  description?: string;
+  required?: boolean;
+};
+
+export type EnumerableField = GeneralInfoType & {
+  type: "string" | "number" | "boolean" | "date";
+  enum?: (string | boolean | number)[];
+  textAreaLine?: number;
+  maxLength?: number;
+  isPassword?: boolean;
+};
+
+export type ObjectField = GeneralInfoType & {
+  type: "object";
+  properties: Record<string, EnumerableField | ObjectField | ArrayField>;
+};
+
+export type ArrayField = GeneralInfoType & {
+  type: "array";
+  items: EnumerableField | ObjectField | ArrayField;
+};
+
+export type InputType = Record<string, EnumerableField | ObjectField | ArrayField>;
+
+//================================================================
 
 const simpleController = <T = any>(
   //
@@ -123,7 +149,7 @@ const simpleController = <T = any>(
         for (const key in httpData.header) {
           payload = {
             ...payload,
-            [key]: checkDataType(httpData.header[key], req.get(key)),
+            [key]: checkDataType(httpData.header[key].type, httpData.header[key].default, req.get(key)),
           } as T;
         }
 
@@ -137,7 +163,7 @@ const simpleController = <T = any>(
         for (const key in httpData.query) {
           payload = {
             ...payload,
-            [key]: checkDataType(httpData.query[key], req.query[key]),
+            [key]: checkDataType(httpData.query[key].type, httpData.query[key].default, req.query[key]),
           } as T;
         }
 
@@ -179,22 +205,22 @@ export const collectSimpleController = (router: express.Router, httpDatas: HTTPD
   return httpDatas.map((x) => simpleController(router, x, localFunctions));
 };
 
-const checkDataType = (pd: QueryType, value: any): any => {
+const checkDataType = (type: string, defaultValue: any, value: any): any => {
   //
 
-  if (pd.type === "number") {
-    return extractNumber(value, pd.default ?? undefined);
+  if (type === "number") {
+    return extractNumber(value, defaultValue ?? undefined);
   }
 
-  if (pd.type === "string") {
-    return value === undefined ? pd.default ?? undefined : (value as string);
+  if (type === "string") {
+    return value === undefined ? defaultValue ?? undefined : (value as string);
   }
 
-  if (pd.type === "boolean") {
-    return value === undefined ? pd.default ?? undefined : extractBoolean(value);
+  if (type === "boolean") {
+    return value === undefined ? defaultValue ?? undefined : extractBoolean(value);
   }
 
-  if (pd.type === "array_of_string") {
+  if (type === "array_of_string") {
     return extractArrayString(value);
   }
 

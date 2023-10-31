@@ -16,19 +16,22 @@ export const controllerReward: HTTPData[] = [
         description: "Success",
         content: {
           items: {
-            type: "array_of_object",
-            properties: {
-              id: { type: "string", description: "" },
-              createdDate: { type: "string", description: "" },
-              title: { type: "string", description: "" },
-              description: { type: "string", description: "" },
-              point: { type: "number", description: "", default: 0 },
-              stock: { type: "number", description: "", default: 0 },
-              image: {
-                type: "object",
-                properties: {
-                  name: { type: "string", description: "image name" },
-                  url: { type: "string", description: "url of image" },
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "string", description: "" },
+                createdDate: { type: "string", description: "" },
+                title: { type: "string", description: "" },
+                description: { type: "string", description: "" },
+                point: { type: "number", description: "", default: 0 },
+                stock: { type: "number", description: "", default: 0 },
+                image: {
+                  type: "object",
+                  properties: {
+                    name: { type: "string", description: "image name" },
+                    url: { type: "string", description: "url of image" },
+                  },
                 },
               },
             },
@@ -53,8 +56,8 @@ export const controllerReward: HTTPData[] = [
         type: "object",
         description: "image thumbnail",
         properties: {
-          name: { type: "string", description: "image name" },
-          url: { type: "string", description: "url of image" },
+          name: { type: "string", description: "image name", default: "image nameee" },
+          url: { type: "string", description: "url of image", default: "image yuerel" },
           zzz: {
             type: "object",
             properties: {
