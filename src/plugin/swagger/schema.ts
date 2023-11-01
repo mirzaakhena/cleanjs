@@ -62,8 +62,13 @@ export type OperationObject = {
   };
 };
 
+export type HeaderObject = Omit<ParameterObject, "name" | "in">;
+
 export type ResponseObject = {
   description?: string;
+  headers?: {
+    [key: string]: HeaderObject;
+  };
   content?: {
     [mediaType: string]: MediaTypeObject | ReferenceObject;
   };

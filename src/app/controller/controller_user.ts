@@ -20,11 +20,11 @@ export const controllerUser: HTTPData[] = [
             items: {
               type: "object",
               properties: {
-                id: { type: "string", description: "" },
-                name: { type: "string", description: "" },
-                createdDate: { type: "string", description: "" },
-                totalPoints: { type: "string", description: "" },
-                status: { type: "string", description: "" },
+                id: { type: "string" },
+                name: { type: "string" },
+                createdDate: { type: "string" },
+                totalPoints: { type: "string" },
+                status: { type: "string" },
               },
             },
           },
@@ -96,6 +96,12 @@ export const controllerUser: HTTPData[] = [
         },
       },
       400: {
+        description: "Fail",
+        content: {
+          message: { type: "string", description: "error message" },
+        },
+      },
+      302: {
         description: "Fail",
         content: {
           message: { type: "string", description: "error message" },

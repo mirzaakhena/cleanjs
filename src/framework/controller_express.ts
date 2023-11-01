@@ -53,15 +53,15 @@ export const extractBoolean = (value: any): boolean | undefined => {
   return value === "true" ? true : value === "false" ? false : undefined;
 };
 
-export type ResponseCode = 200 | 201 | 400 | 401 | number;
+export type ResponseCode = 200 | 201 | 302 | 400 | 401 | number;
 
 export type Methods = "all" | "get" | "post" | "put" | "delete" | "patch" | "options" | "head";
 
-export type DataType =
-  | "string" //
-  | "boolean" //
-  | "number" //
-  | "array_of_string"; //
+// export type DataType =
+//   | "string" //
+//   | "boolean" //
+//   | "number" //
+//   | "array_of_string"; //
 
 // export type QueryType = {
 //   type: DataType;
@@ -72,13 +72,18 @@ export type DataType =
 //   required?: boolean;
 // };
 
-export type FuncName = "dateNow" | "assign" | "randomString" | "contextData";
+// export type FuncName = "dateNow" | "assign" | "randomString" | "contextData";
 
-export type FuncType = { funcName: FuncName; input?: any };
+export type FuncType = { funcName: string; input?: any };
+
+export type HeaderType = {
+  location: string;
+};
 
 export type ResponseType = {
   description?: string;
   summary?: string;
+  headers?: HeaderType;
   content: InputType;
 };
 

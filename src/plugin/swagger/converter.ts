@@ -74,10 +74,17 @@ function extractPath(input: HTTPData, openApiObj: OpenAPIObject): ParameterObjec
             ({
               name,
               in: "query",
-              description: `${details.description}` || undefined, // Handle undefined description
+              // description: `${details.description}` ?? undefined, // Handle undefined description
               // default: details.default,
               required: details.required || undefined,
-              schema: input.query ? handlePropertiesObject(input.query) : undefined,
+              // schema: input.query ? handlePropertiesObject(input.query.) : undefined,
+              schema: input.query
+                ? {
+                    type: input.query[name].type === "date" ? "string" : input.query[name].type,
+                    default: input.query[name].default ?? undefined,
+                    description: input.query[name].description ?? undefined,
+                  }
+                : undefined,
             } as ParameterObject)
         )
       : []),
@@ -93,11 +100,11 @@ function extractPath(input: HTTPData, openApiObj: OpenAPIObject): ParameterObjec
             ({
               name,
               in: "path",
-              description: queryType.description || undefined, // Handle undefined description
               required: true,
               schema: {
                 type: queryType.type === "number" ? "integer" : queryType.type,
                 default: queryType.default,
+                description: queryType.description ?? undefined, // Handle undefined description
               },
             } as ParameterObject)
         )
@@ -140,8 +147,8 @@ function handlePropertiesObject(input: InputType) {
 
     const basicField = {
       type: field.type === "date" ? "string" : field.type,
-      default: field.default,
-      description: field.description,
+      default: field.default ?? undefined,
+      description: field.description ?? undefined,
     };
 
     if (field.type === "object" && field.properties) {
