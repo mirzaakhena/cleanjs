@@ -94,9 +94,9 @@ export type HTTPData = {
   method: Methods;
   path: string;
   tag: string;
-  query?: InputType; // Record<string, QueryType>;
-  param?: InputType; // Record<string, QueryType>;
-  header?: InputType; //Record<string, QueryType>;
+  query?: InputType;
+  param?: InputType;
+  header?: InputType;
   body?: InputType;
   local?: Record<string, FuncType>;
   response?: Record<ResponseCode, ResponseType>;
@@ -182,14 +182,18 @@ const simpleController = <T = any>(
         for (const key in httpData.local) {
           //
 
-          const func = localFunctions[key];
+          const localVar = httpData.local[key]; // localFunctions[key];
+
+          const func = localFunctions[localVar.funcName];
           if (!func) {
-            throw new Error(`local function ${key} is not defined`);
+            throw new Error(`local function ${localVar.funcName} is not defined`);
           }
+
+          console.log(">>>>", key, await func(ctx, httpData.local[key].input));
 
           payload = {
             ...payload,
-            [key]: func(ctx, httpData.local[key]), // checkLocalData(ctx, key, httpData.local[key]),
+            [key]: await func(ctx, httpData.local[key].input), // checkLocalData(ctx, key, httpData.local[key]),
           } as T;
         }
 

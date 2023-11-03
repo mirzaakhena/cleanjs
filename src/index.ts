@@ -106,6 +106,7 @@ export const main = async () => {
     }
 
     printController(controllerCollection);
+
     console.log("controller url :", "http://localhost:3000/controllers");
     console.log("swagger url    :", "http://localhost:3000/swagger");
     console.log("openapi url    :", "http://localhost:3000/openapi");

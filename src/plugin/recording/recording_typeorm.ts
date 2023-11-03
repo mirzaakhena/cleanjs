@@ -46,6 +46,9 @@ export class DataRecording implements IDataRecording {
   @Column({ type: "jsonb", nullable: true })
   functions?: RecordFunction[];
 
+  @Column({ type: "integer" })
+  duration?: number;
+
   //
 }
 
