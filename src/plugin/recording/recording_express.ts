@@ -3,15 +3,15 @@ import { extractArrayString, extractBoolean, extractNumber } from "../../framewo
 import { Outport, RequestType, UsecaseWithGatewayInstance } from "../../framework/core.js";
 import { generateID } from "../../utility.js";
 import {
-  DataRecordingJourney,
+  DataRecordingPlaylist,
   DeleteAllRecording,
   DeleteSomeRecording,
-  DeleteSomeRecordingJourney,
+  DeleteSomeRecordingPlaylist,
   FindAllRecording,
-  FindAllRecordingJourney,
+  FindAllRecordingPlaylist,
   ReplayableUsecase,
   SaveRecording,
-  SaveRecordingJourney,
+  SaveRecordingPlaylist,
   UpdateRecording,
   areDataObjectsEqual,
   createBaseFunc,
@@ -35,9 +35,9 @@ export const handleRecording = (
     findAllRecording: FindAllRecording;
     deleteAllRecording: DeleteAllRecording;
     deleteSomeRecording: DeleteSomeRecording;
-    findAllRecordingJourney: FindAllRecordingJourney;
-    saveRecordingJourney: SaveRecordingJourney;
-    deleteSomeRecordingJourney: DeleteSomeRecordingJourney;
+    findAllRecordingPlaylist: FindAllRecordingPlaylist;
+    saveRecordingPlaylist: SaveRecordingPlaylist;
+    deleteSomeRecordingPlaylist: DeleteSomeRecordingPlaylist;
 
     replayableUsecases: ReplayableUsecase[];
     usecaseWithGatewayInstance: UsecaseWithGatewayInstance;
@@ -332,7 +332,7 @@ export const handleRecording = (
     }
   });
 
-  router.post("/journey", async (req, res) => {
+  router.post("/playlist", async (req, res) => {
     //
     try {
       const ctx = getContext("");
@@ -354,27 +354,27 @@ export const handleRecording = (
         }
       }
 
-      const journeyId = generateID();
-      await repos.saveRecordingJourney(ctx, {
+      const playlistId = generateID();
+      await repos.saveRecordingPlaylist(ctx, {
         description,
-        id: journeyId,
+        id: playlistId,
         recordIds,
       });
 
       res.json({
-        message: `journey id ${journeyId} has been created`,
-        journeyId,
+        message: `playlist id ${playlistId} has been created`,
+        playlistId,
       });
     } catch (err) {
       res.status(400).json({ message: (err as Error).message });
     }
   });
 
-  router.get("/journey", async (req, res) => {
+  router.get("/playlist", async (req, res) => {
     //
 
     const ctx = getContext("");
-    const [items, count] = await repos.findAllRecordingJourney(ctx, {
+    const [items, count] = await repos.findAllRecordingPlaylist(ctx, {
       page: extractNumber(req.query.page),
       size: extractNumber(req.query.size),
       descriptionLike: req.query.descriptionLike as string,
@@ -383,36 +383,36 @@ export const handleRecording = (
     res.json({ items, count });
   });
 
-  router.get("/journey/:journeyId", async (req, res) => {
+  router.get("/playlist/:playlistId", async (req, res) => {
     //
 
-    const [result, count] = await repos.findAllRecordingJourney(getContext(""), {
-      id: req.params.journeyId,
+    const [result, count] = await repos.findAllRecordingPlaylist(getContext(""), {
+      id: req.params.playlistId,
     });
 
     if (count === 0) {
-      throw new Error(`recording journey with id  ${req.params.journeyId} is not found`);
+      throw new Error(`recording playlist with id  ${req.params.playlistId} is not found`);
     }
 
     res.json(result[0]);
   });
 
-  router.put("/journey/:journeyId", async (req, res) => {
+  router.put("/playlist/:playlistId", async (req, res) => {
     //
 
     try {
       const ctx = getContext("");
 
-      const journeyId = req.params.journeyId;
+      const playlistId = req.params.playlistId;
       const description = req.body.description;
       const recordIds = req.body.recordIds as string[];
 
-      let [newJourneys, count] = await repos.findAllRecordingJourney(ctx, {
-        id: journeyId,
+      let [newPlaylists, count] = await repos.findAllRecordingPlaylist(ctx, {
+        id: playlistId,
       });
 
       if (count === 0) {
-        throw new Error(`recording journey with id  ${journeyId} is not found`);
+        throw new Error(`recording playlist with id  ${playlistId} is not found`);
       }
 
       if (description === "") {
@@ -429,48 +429,48 @@ export const handleRecording = (
         }
       }
 
-      const newJourney: DataRecordingJourney = {
-        ...newJourneys[0],
+      const newPlaylist: DataRecordingPlaylist = {
+        ...newPlaylists[0],
         description,
         recordIds,
       };
 
-      await repos.saveRecordingJourney(ctx, newJourney);
+      await repos.saveRecordingPlaylist(ctx, newPlaylist);
 
       res.json({
-        message: `journey id ${journeyId} has been updated`,
+        message: `playlist id ${playlistId} has been updated`,
       });
     } catch (err) {
       res.status(400).json({ message: (err as Error).message });
     }
   });
 
-  router.delete("/journey/:journeyId", async (req, res) => {
+  router.delete("/playlist/:playlistId", async (req, res) => {
     //
     const ctx = getContext("");
-    await repos.deleteSomeRecordingJourney(ctx, req.params.journeyId);
+    await repos.deleteSomeRecordingPlaylist(ctx, req.params.playlistId);
 
     res.json({
-      message: `journey id ${req.params.journeyId} has been deleted`,
+      message: `playlist id ${req.params.playlistId} has been deleted`,
     });
   });
 
-  router.post("/journey/:journeyId/replay", async (req, res) => {
+  router.post("/playlist/:playlistId/replay", async (req, res) => {
     const ctx = getContext("");
 
-    const journeyId = req.params.journeyId;
+    const playlistId = req.params.playlistId;
 
     try {
-      const [journeys, count] = await repos.findAllRecordingJourney(ctx, {
-        id: journeyId,
+      const [playlists, count] = await repos.findAllRecordingPlaylist(ctx, {
+        id: playlistId,
       });
 
       if (count === 0) {
-        throw new Error(`recording journey with id  ${journeyId} is not found`);
+        throw new Error(`recording playlist with id  ${playlistId} is not found`);
       }
 
       //
-      for (const recordingId of journeys[0].recordIds) {
+      for (const recordingId of playlists[0].recordIds) {
         //
         const [recordings, count] = await repos.findAllRecording(ctx, {
           ids: [recordingId],
@@ -501,7 +501,7 @@ export const handleRecording = (
         //
       }
 
-      res.json({ message: `journey ${journeyId} is run successfully` });
+      res.json({ message: `playlist ${playlistId} is run successfully` });
     } catch (err) {
       //
       res.status(400).json({ message: (err as Error).message });

@@ -3,10 +3,10 @@ import { Context, Inport, Middleware, RequestType, UsecaseWithGatewayInstance } 
 import {
   ImplDeleteAllRecording,
   ImplDeleteRecording,
-  ImplDeleteRecordingJourney,
+  ImplDeleteRecordingPlaylist,
   ImplFindAllRecording,
-  ImplFindAllRecordingJourney,
-  ImplSaveRecordingJourney,
+  ImplFindAllRecordingPlaylist,
+  ImplSaveRecordingPlaylist,
   ImplSaveRecordingToDB,
   ImplUpdateRecording,
 } from "./recording_typeorm.js";
@@ -59,24 +59,24 @@ export type FindAllRecordingFilter = {
 
 export type FindAllRecording = (ctx: Context, filter: FindAllRecordingFilter) => Promise<[DataRecording[], number]>;
 
-export interface DataRecordingJourney {
+export interface DataRecordingPlaylist {
   id: string;
   description: string;
   recordIds: string[];
 }
 
-export type SaveRecordingJourney = (ctx: Context, obj: DataRecordingJourney) => Promise<void>;
+export type SaveRecordingPlaylist = (ctx: Context, obj: DataRecordingPlaylist) => Promise<void>;
 
-export type DeleteSomeRecordingJourney = (ctx: Context, id: string) => Promise<void>;
+export type DeleteSomeRecordingPlaylist = (ctx: Context, id: string) => Promise<void>;
 
-export type FindAllRecordingJourneyFilter = {
+export type FindAllRecordingPlaylistFilter = {
   id?: string;
   page?: number;
   size?: number;
   descriptionLike?: string;
 };
 
-export type FindAllRecordingJourney = (ctx: Context, filter: FindAllRecordingJourneyFilter) => Promise<[DataRecordingJourney[], number]>;
+export type FindAllRecordingPlaylist = (ctx: Context, filter: FindAllRecordingPlaylistFilter) => Promise<[DataRecordingPlaylist[], number]>;
 
 export type RecordFunction = {
   funcName?: string;
@@ -301,9 +301,9 @@ export const recordingInit = (router: express.Router, ds: DataSource, usecaseWit
     findAllRecording: ImplFindAllRecording(ds),
     deleteSomeRecording: ImplDeleteRecording(ds),
     deleteAllRecording: ImplDeleteAllRecording(ds),
-    deleteSomeRecordingJourney: ImplDeleteRecordingJourney(ds),
-    saveRecordingJourney: ImplSaveRecordingJourney(ds),
-    findAllRecordingJourney: ImplFindAllRecordingJourney(ds),
+    deleteSomeRecordingPlaylist: ImplDeleteRecordingPlaylist(ds),
+    saveRecordingPlaylist: ImplSaveRecordingPlaylist(ds),
+    findAllRecordingPlaylist: ImplFindAllRecordingPlaylist(ds),
     replayableUsecases,
     usecaseWithGatewayInstance,
   });

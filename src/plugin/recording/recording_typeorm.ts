@@ -3,15 +3,15 @@ import { RequestType, Context } from "../../framework/core.js";
 import {
   DeleteAllRecording,
   DeleteSomeRecording,
-  DeleteSomeRecordingJourney,
+  DeleteSomeRecordingPlaylist,
   FindAllRecording,
   FindAllRecordingFilter,
-  FindAllRecordingJourney,
-  FindAllRecordingJourneyFilter,
+  FindAllRecordingPlaylist,
+  FindAllRecordingPlaylistFilter,
   DataRecording as IDataRecording,
-  DataRecordingJourney as IDataRecordingJourney,
+  DataRecordingPlaylist as IDataRecordingPlaylist,
   SaveRecording,
-  SaveRecordingJourney,
+  SaveRecordingPlaylist,
   UpdateRecording,
 } from "./recording.js";
 import { RecordFunction } from "./recording.js";
@@ -53,7 +53,7 @@ export class DataRecording implements IDataRecording {
 }
 
 @Entity()
-export class DataRecordingJourney implements IDataRecordingJourney {
+export class DataRecordingPlaylist implements IDataRecordingPlaylist {
   @PrimaryColumn({ type: "text" })
   id: string = "";
 
@@ -172,31 +172,31 @@ export const ImplUpdateRecording = (ds: DataSource): UpdateRecording => {
   //
 };
 
-export const ImplSaveRecordingJourney = (ds: DataSource): SaveRecordingJourney => {
+export const ImplSaveRecordingPlaylist = (ds: DataSource): SaveRecordingPlaylist => {
   //
-  return async (ctx: Context, obj: IDataRecordingJourney): Promise<void> => {
+  return async (ctx: Context, obj: IDataRecordingPlaylist): Promise<void> => {
     //
-    await ds.getRepository(DataRecordingJourney).save(obj);
+    await ds.getRepository(DataRecordingPlaylist).save(obj);
   };
 
   //
 };
 
-export const ImplDeleteRecordingJourney = (ds: DataSource): DeleteSomeRecordingJourney => {
+export const ImplDeleteRecordingPlaylist = (ds: DataSource): DeleteSomeRecordingPlaylist => {
   //
   return async (ctx: Context, id: string): Promise<void> => {
     //
-    await ds.getRepository(DataRecordingJourney).delete(id);
+    await ds.getRepository(DataRecordingPlaylist).delete(id);
   };
 
   //
 };
 
-export const ImplFindAllRecordingJourney = (ds: DataSource): FindAllRecordingJourney => {
+export const ImplFindAllRecordingPlaylist = (ds: DataSource): FindAllRecordingPlaylist => {
   //
-  return async (ctx: Context, filter: FindAllRecordingJourneyFilter): Promise<[IDataRecordingJourney[], number]> => {
+  return async (ctx: Context, filter: FindAllRecordingPlaylistFilter): Promise<[IDataRecordingPlaylist[], number]> => {
     //
-    let where: FindOptionsWhere<DataRecordingJourney> = {};
+    let where: FindOptionsWhere<DataRecordingPlaylist> = {};
 
     if (filter.id) where.id = filter.id;
     if (filter.descriptionLike) where.description = ILike(`%${filter.descriptionLike}%`);
@@ -204,7 +204,7 @@ export const ImplFindAllRecordingJourney = (ds: DataSource): FindAllRecordingJou
     const size = filter.size || 20;
     const page = (filter.page && filter.page < 1 ? 1 : filter.page) || 1;
 
-    const result = await ds.getRepository(DataRecordingJourney).findAndCount({
+    const result = await ds.getRepository(DataRecordingPlaylist).findAndCount({
       where,
       take: size,
       skip: (page - 1) * size,
