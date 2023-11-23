@@ -1,4 +1,4 @@
-import { HTTPData } from "../../framework/controller_express.js";
+import { HTTPData } from "../../framework/data_http.js";
 
 export const controllerUserPoint: HTTPData[] = [
   {

@@ -1,4 +1,4 @@
-import { HTTPData } from "../../framework/controller_express.js";
+import { HTTPData } from "../../framework/data_http.js";
 import { NewOpenAPI, controllerToSwagger } from "./converter.js";
 import { OpenAPIObject } from "./schema.js";
 

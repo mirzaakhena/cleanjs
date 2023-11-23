@@ -1,4 +1,4 @@
-import { HTTPData } from "../../framework/controller_express.js";
+import { HTTPData } from "../../framework/data_http.js";
 import { controllerReward } from "./controller_reward.js";
 import { controllerStruk } from "./controller_struk.js";
 import { controllerUser } from "./controller_user.js";

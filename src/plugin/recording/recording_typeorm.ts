@@ -128,6 +128,7 @@ export const ImplFindAllRecording = (ds: DataSource): FindAllRecording => {
       description: true,
       requestType: true,
       error: true,
+      duration: true,
     };
 
     if (filter.complete) {

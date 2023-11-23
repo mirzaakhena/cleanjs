@@ -1,4 +1,4 @@
-import { HTTPData } from "../../framework/controller_express.js";
+import { HTTPData } from "../../framework/data_http.js";
 
 export const controllerUser: HTTPData[] = [
   {
@@ -91,7 +91,7 @@ export const controllerUser: HTTPData[] = [
       userID: { type: "string", description: "id of user", default: "0" },
     },
     body: {
-      status: { type: "string", enum: ["ACTIVE", "NON_ACTIVE"], description: "status of user", default: "NON_ACTIVE" },
+      status: { type: "enum", enum: ["ACTIVE", "NON_ACTIVE"], description: "status of user", default: "NON_ACTIVE" },
       alamat: { type: "string", description: "kdlaskdlas", default: "Bandung" },
       peliharaan: {
         type: "array",

@@ -1,4 +1,4 @@
-import { HTTPData } from "../../framework/controller_express.js";
+import { HTTPData } from "../../framework/data_http.js";
 
 export function groupingControllerWithTag(httpData: HTTPData[]): { tag: string; httpDatas: HTTPData[] }[] {
   const groupedData: { [tag: string]: HTTPData[] } = {};

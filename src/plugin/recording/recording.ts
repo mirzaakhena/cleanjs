@@ -17,12 +17,16 @@ const FOLDER_NAME = "recording";
 const RECORDING_FIELD = "recording";
 
 type RecordingState = {
-  enabled: boolean;
+  // enabled_: boolean;
+  command: boolean;
+  query: boolean;
   saveRecording: SaveRecording | null;
 };
 
 export const recordingState: RecordingState = {
-  enabled: false,
+  // enabled: false,
+  command: false,
+  query: false,
   saveRecording: null, //ImplSaveRecordingToFile(FOLDER_NAME),
 };
 
@@ -104,7 +108,7 @@ const getExpectedOutput = (f: RecordFunction, funcName: string, input: any) => {
 };
 
 export const prepareRecorder = (ctx: Context) => {
-  if (!recordingState.enabled) {
+  if (!recordingState.command && !recordingState.query) {
     return;
   }
 
@@ -200,7 +204,7 @@ export const recordingMiddleware: () => Middleware = () => {
     return async (ctx, input) => {
       //
 
-      if (!recordingState.enabled) {
+      if (!((recordingState.command && requestType === "command") || (recordingState.query && requestType === "query"))) {
         return await inport(ctx, input);
       }
 

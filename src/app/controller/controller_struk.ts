@@ -1,4 +1,4 @@
-import { HTTPData } from "../../framework/controller_express.js";
+import { HTTPData } from "../../framework/data_http.js";
 
 export const controllerStruk: HTTPData[] = [
   {
@@ -113,7 +113,7 @@ export const controllerStruk: HTTPData[] = [
       strukID: { type: "string", description: "id of struk" },
     },
     body: {
-      status: { type: "string", default: "APPROVE", enum: ["APPROVE", "REJECT"] }, // TODO remove default later
+      status: { type: "enum", default: "APPROVE", enum: ["APPROVE", "REJECT"] }, // TODO remove default later
     },
     local: {
       newUserPointID: { funcName: "randomString" },

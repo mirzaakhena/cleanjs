@@ -1,7 +1,7 @@
-import { query } from "express";
-import { HTTPData, InputType, ResponseCode, ResponseType } from "../../framework/controller_express.js";
-import { OpenAPIObject, OperationObject, ParameterObject, PathItemObject, ReferenceObject, RequestBodyObject, ResponseObject, SchemaObject } from "./schema.js";
+import { HTTPData, ResponseCode, ResponseType } from "../../framework/data_http.js";
+import { InputType } from "../../framework/data_type.js";
 import { camelToPascalWithSpace } from "../../utility.js";
+import { OpenAPIObject, OperationObject, ParameterObject, PathItemObject, ResponseObject, SchemaObject } from "./schema.js";
 
 export const NewOpenAPI = (): OpenAPIObject => {
   return {
@@ -135,7 +135,7 @@ function extractPath(input: HTTPData, openApiObj: OpenAPIObject): ParameterObjec
   return params;
 }
 
-function handlePropertiesObject(input: InputType) {
+function handlePropertiesObject(input: Record<string, InputType>) {
   //
 
   let schemaObj: Record<string, SchemaObject> = {};

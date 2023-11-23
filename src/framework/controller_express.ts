@@ -1,6 +1,7 @@
 import express from "express";
 import { camelToPascalWithSpace, generateID } from "../utility.js";
 import { Context, Inport, createController } from "./core.js";
+import { HTTPData } from "./data_http.js";
 
 export type HTTPDataResponse = {
   headers: Record<string, string>;
@@ -33,17 +34,15 @@ export const extractArrayString = (values: any) => (Array.isArray(values) ? [...
 
 // TODO move it to utility
 export const extractNumber = (value: any, defaultValue?: any): number | undefined => {
-  if (defaultValue) {
-    return defaultValue;
-  }
   if (typeof value === "number" && !isNaN(value)) {
     return value;
-  }
-  if (typeof value === "string") {
+  } else if (typeof value === "string") {
     const numericValue = +value;
     if (!isNaN(numericValue)) {
       return numericValue;
     }
+  } else if (defaultValue) {
+    return defaultValue;
   }
   return undefined;
 };
@@ -53,9 +52,9 @@ export const extractBoolean = (value: any): boolean | undefined => {
   return value === "true" ? true : value === "false" ? false : undefined;
 };
 
-export type ResponseCode = 200 | 201 | 302 | 400 | 401 | number;
+// export type ResponseCode = 200 | 201 | 302 | 400 | 401 | number;
 
-export type Methods = "all" | "get" | "post" | "put" | "delete" | "patch" | "options" | "head";
+// export type Methods = "all" | "get" | "post" | "put" | "delete" | "patch" | "options" | "head";
 
 // export type DataType =
 //   | "string" //
@@ -74,62 +73,62 @@ export type Methods = "all" | "get" | "post" | "put" | "delete" | "patch" | "opt
 
 // export type FuncName = "dateNow" | "assign" | "randomString" | "contextData";
 
-export type FuncType = { funcName: string; input?: any };
+// export type FuncType = { funcName: string; input?: any };
 
-export type HeaderType = {
-  location: string;
-};
+// export type HeaderType = {
+//   location: string;
+// };
 
-export type ResponseType = {
-  description?: string;
-  summary?: string;
-  headers?: HeaderType;
-  content: InputType;
-};
+// export type ResponseType = {
+//   description?: string;
+//   summary?: string;
+//   headers?: HeaderType;
+//   content: InputType;
+// };
 
-export type HTTPData = {
-  description?: string;
-  summary?: string;
-  usecase: string;
-  method: Methods;
-  path: string;
-  tag: string;
-  query?: InputType;
-  param?: InputType;
-  header?: InputType;
-  body?: InputType;
-  local?: Record<string, FuncType>;
-  response?: Record<ResponseCode, ResponseType>;
-};
+// export type HTTPData = {
+//   description?: string;
+//   summary?: string;
+//   usecase: string;
+//   method: Methods;
+//   path: string;
+//   tag: string;
+//   query?: InputType;
+//   param?: InputType;
+//   header?: InputType;
+//   body?: InputType;
+//   local?: Record<string, FuncType>;
+//   response?: Record<ResponseCode, ResponseType>;
+// };
 
-//================================================================
+// //================================================================
 
-type GeneralInfoType = {
-  default?: any;
-  summary?: string;
-  description?: string;
-  required?: boolean;
-};
+// type GeneralInfoType = {
+//   default?: any;
+//   summary?: string;
+//   description?: string;
+//   required?: boolean;
+// };
 
-export type EnumerableField = GeneralInfoType & {
-  type: "string" | "number" | "boolean" | "date";
-  enum?: (string | boolean | number)[];
-  textAreaLine?: number;
-  maxLength?: number;
-  isPassword?: boolean;
-};
+// export type EnumerableField = GeneralInfoType & {
+//   type: "string" | "number" | "boolean" | "date";
+//   enum?: (string | boolean | number)[];
+//   textAreaLine?: number;
+//   maxLength?: number;
+//   isPassword?: boolean;
+// };
 
-export type ObjectField = GeneralInfoType & {
-  type: "object";
-  properties: Record<string, EnumerableField | ObjectField | ArrayField>;
-};
+// export type ObjectField = GeneralInfoType & {
+//   type: "object";
+//   properties: Record<string, EnumerableField | ObjectField | ArrayField>;
+// };
 
-export type ArrayField = GeneralInfoType & {
-  type: "array";
-  items: EnumerableField | ObjectField | ArrayField;
-};
+// export type ArrayField = GeneralInfoType & {
+//   type: "array";
+//   items: EnumerableField | ObjectField | ArrayField;
+// };
 
-export type InputType = Record<string, EnumerableField | ObjectField | ArrayField>;
+// export type InputType = Record<string, EnumerableField | ObjectField | ArrayField>;
 
 //================================================================
 

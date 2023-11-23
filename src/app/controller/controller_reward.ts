@@ -1,4 +1,4 @@
-import { HTTPData } from "../../framework/controller_express.js";
+import { HTTPData } from "../../framework/data_http.js";
 
 export const controllerReward: HTTPData[] = [
   {
@@ -50,8 +50,8 @@ export const controllerReward: HTTPData[] = [
     body: {
       title: { type: "string", default: "TITLE_REWARD", description: "Title for reward" },
       description: { type: "string", default: "DESC_REWARD", description: "Description for reward" },
-      point: { type: "number", default: "10", description: "the number of point for a reward" },
-      stock: { type: "number", default: "100", description: "reward quantity" },
+      point: { type: "number", default: 10, description: "the number of point for a reward" },
+      stock: { type: "number", default: 100, description: "reward quantity" },
       image: {
         type: "object",
         description: "image thumbnail",

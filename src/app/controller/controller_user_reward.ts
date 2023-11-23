@@ -1,4 +1,4 @@
-import { HTTPData } from "../../framework/controller_express.js";
+import { HTTPData } from "../../framework/data_http.js";
 
 export const controllerUserReward: HTTPData[] = [
   {
@@ -67,10 +67,10 @@ export const controllerUserReward: HTTPData[] = [
     usecase: "userRewardApproval",
     tag: "user_reward",
     param: {
-      userRewardID: { type: "string", description: "id of userReward", default: 0 },
+      userRewardID: { type: "string", description: "id of userReward", default: "0" },
     },
     body: {
-      status: { type: "string", default: "APPROVE", enum: ["APPROVE", "REJECT"] },
+      status: { type: "enum", default: "APPROVE", enum: ["APPROVE", "REJECT"] },
     },
     local: {
       now: { funcName: "dateNow" },

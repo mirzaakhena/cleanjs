@@ -1,7 +1,6 @@
 import { Usecase } from "../../framework/core.js";
 import { FindOneEntity, SaveEntity } from "../../framework/repo.js";
 import { Reward, RewardID } from "../model/reward.js";
-import { ApprovalActionStatus } from "../model/approval.js";
 import { User, UserID } from "../model/user.js";
 import { UserReward, UserRewardID } from "../model/user_reward.js";
 

@@ -48,7 +48,9 @@ export const handleRecording = (
   router.get("/status", async (req, res) => {
     //
     res.json({
-      status: recordingState.enabled,
+      status: true,
+      command: recordingState.command,
+      query: recordingState.query,
       replayableUsecases: repos.replayableUsecases.map((x) => x.name),
     });
     //
@@ -57,19 +59,9 @@ export const handleRecording = (
   router.post("/status", async (req, res) => {
     //
 
-    const status = req.body.status;
-
     try {
-      if (!["enabled", "disabled"].some((x) => x === status)) {
-        throw new Error("status must enabled or disabled");
-      }
-
-      if (status === "enabled") {
-        recordingState.enabled = true;
-        //
-      } else if (status === "disabled") {
-        recordingState.enabled = false;
-      }
+      recordingState.command = req.body.command;
+      recordingState.query = req.body.query;
 
       res.json({ message: `recording state is changed to ${status}` });
     } catch (err) {
