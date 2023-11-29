@@ -1,6 +1,5 @@
 import express from "express";
 import { RequestWithContext } from "../../framework/controller_express.js";
-import { setDescriptionToContext } from "../../plugin/recording/recording.js";
 
 export const handleUser = () => {
   return (req: RequestWithContext, res: express.Response, next: express.NextFunction) => {

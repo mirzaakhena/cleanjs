@@ -8,7 +8,7 @@ import { controllerCollection } from "./app/controller/_controller.js";
 import { collectSimpleController, middlewareContext, printController } from "./framework/controller_express.js";
 import { Middleware, bootstrap } from "./framework/core.js";
 import { transactionMiddleware } from "./framework/gateway_typeorm.js";
-import { recordingInit, recordingMiddleware, setDescriptionToContext } from "./plugin/recording/recording.js";
+import { recordingInit, recordingMiddleware, setDescriptionRecording } from "./plugin/recording/recording.js";
 
 import swaggerUi from "swagger-ui-express";
 import { fileURLToPath } from "url";
@@ -55,7 +55,7 @@ export const main = async () => {
       // sample how to create middleware
       const middlewareSample: Middleware = (funcType, requestType, name, inport) => {
         return async (ctx, input) => {
-          setDescriptionToContext(ctx, "omar");
+          setDescriptionRecording(ctx, "omar");
           return await inport(ctx, input);
         };
       };
@@ -78,7 +78,11 @@ export const main = async () => {
     const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    app.use(cors());
+    app.use(
+      cors({
+        exposedHeaders: ["TraceId", "Date"],
+      })
+    );
     app.use(middlewareContext());
     app.use(handleUser());
     app.use(mainRouter);

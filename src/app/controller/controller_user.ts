@@ -11,12 +11,6 @@ export const controllerUser: HTTPData[] = [
       page: { type: "number", default: 1, description: "Page number for pagination" },
       size: { type: "number", default: 20, description: "Number of items per page" },
     },
-    param: {
-      alamat: { type: "string", description: "aaaa", default: "hehehe" },
-    },
-    header: {
-      what: { type: "number", description: "bbbb", default: 9 },
-    },
     response: {
       200: {
         description: "Success",
@@ -47,20 +41,6 @@ export const controllerUser: HTTPData[] = [
     tag: "user",
     body: {
       name: { type: "string", default: "mirza", description: "name of the user" },
-      hobbies: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            dilaut: {
-              type: "string",
-            },
-            didarat: {
-              type: "string",
-            },
-          },
-        },
-      },
     },
     local: {
       newUserID: { funcName: "randomString" },
@@ -92,13 +72,6 @@ export const controllerUser: HTTPData[] = [
     },
     body: {
       status: { type: "enum", enum: ["ACTIVE", "NON_ACTIVE"], description: "status of user", default: "NON_ACTIVE" },
-      alamat: { type: "string", description: "kdlaskdlas", default: "Bandung" },
-      peliharaan: {
-        type: "array",
-        items: {
-          type: "string",
-        },
-      },
     },
     response: {
       200: {

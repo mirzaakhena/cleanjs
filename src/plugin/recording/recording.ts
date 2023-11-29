@@ -1,5 +1,5 @@
 import express from "express";
-import { Context, Inport, Middleware, RequestType, UsecaseWithGatewayInstance } from "../../framework/core.js";
+import { Context, FunctionType, Inport, Middleware, RequestType, UsecaseWithGatewayInstance } from "../../framework/core.js";
 import {
   ImplDeleteAllRecording,
   ImplDeleteRecording,
@@ -17,16 +17,16 @@ const FOLDER_NAME = "recording";
 const RECORDING_FIELD = "recording";
 
 type RecordingState = {
-  // enabled_: boolean;
-  command: boolean;
-  query: boolean;
+  enabled: boolean;
+  // command: boolean;
+  // query: boolean;
   saveRecording: SaveRecording | null;
 };
 
 export const recordingState: RecordingState = {
-  // enabled: false,
-  command: false,
-  query: false,
+  enabled: false,
+  // command: false,
+  // query: false,
   saveRecording: null, //ImplSaveRecordingToFile(FOLDER_NAME),
 };
 
@@ -107,8 +107,8 @@ const getExpectedOutput = (f: RecordFunction, funcName: string, input: any) => {
   return result.output;
 };
 
-export const prepareRecorder = (ctx: Context) => {
-  if (!recordingState.command && !recordingState.query) {
+const prepareRecorder = (ctx: Context) => {
+  if (!recordingState.enabled) {
     return;
   }
 
@@ -122,7 +122,18 @@ export const prepareRecorder = (ctx: Context) => {
   };
 };
 
-export const recordGateway = (ctx: Context, payload: RecordAndStorePayload) => {
+const recordValue = (ctx: Context, funcType: FunctionType, payload: RecordAndStorePayload) => {
+  if (funcType === "controller") {
+    recordController(ctx, payload);
+    return;
+  }
+  if (funcType === "gateway") {
+    recordGateway(ctx, payload);
+    return;
+  }
+};
+
+const recordGateway = (ctx: Context, payload: RecordAndStorePayload) => {
   //
 
   if (!ctx.data[RECORDING_FIELD]) {
@@ -147,7 +158,7 @@ export const recordGateway = (ctx: Context, payload: RecordAndStorePayload) => {
   return payload.output;
 };
 
-export const recordController = async (ctx: Context, payload: RecordAndStorePayload) => {
+const recordController = async (ctx: Context, payload: RecordAndStorePayload) => {
   //
 
   if (!ctx.data[RECORDING_FIELD]) {
@@ -179,7 +190,7 @@ export const createBaseFunc = <REQUEST, RESPONSE>(rf: RecordFunction, actionName
   };
 };
 
-export const setDescriptionToContext = (ctx: Context, description: string) => {
+export const setDescriptionRecording = (ctx: Context, description: string) => {
   if (!ctx.data[RECORDING_FIELD]) {
     return;
   }
@@ -204,81 +215,48 @@ export const recordingMiddleware: () => Middleware = () => {
     return async (ctx, input) => {
       //
 
-      if (!((recordingState.command && requestType === "command") || (recordingState.query && requestType === "query"))) {
+      if (!recordingState.enabled) {
         return await inport(ctx, input);
       }
 
-      //
-
       const start = Date.now();
 
+      //
       if (funcType === "controller") {
-        //
         prepareRecorder(ctx);
-        try {
-          const result = await inport(ctx, input);
-
-          recordController(ctx, {
-            requestType,
-            funcName: name,
-            input,
-            output: result,
-            description: getDescriptionFromContext(ctx),
-            duration: Date.now() - start,
-          });
-
-          return result;
-
-          //
-        } catch (error: any) {
-          //
-
-          recordController(ctx, {
-            requestType,
-            funcName: name,
-            input,
-            error,
-            description: getDescriptionFromContext(ctx),
-            duration: Date.now() - start,
-          });
-
-          throw error;
-        }
       }
 
-      if (funcType === "gateway") {
-        try {
-          const result = await inport(ctx, input);
+      try {
+        //
 
-          recordGateway(ctx, {
-            requestType,
-            funcName: name,
-            input,
-            output: result,
-            description: getDescriptionFromContext(ctx),
-            duration: Date.now() - start,
-          });
+        const result = await inport(ctx, input);
 
-          return result;
+        recordValue(ctx, funcType, {
+          requestType,
+          funcName: name,
+          input,
+          output: result,
+          description: getDescriptionFromContext(ctx),
+          duration: Date.now() - start,
+        });
 
-          //
-        } catch (error: any) {
-          //
+        return result;
 
-          recordGateway(ctx, {
-            requestType,
-            funcName: name,
-            input,
-            error,
-            description: getDescriptionFromContext(ctx),
-            duration: Date.now() - start,
-          });
+        //
+      } catch (error: any) {
+        //
 
-          throw error;
-        }
+        recordValue(ctx, funcType, {
+          requestType,
+          funcName: name,
+          input,
+          error: error.message,
+          description: getDescriptionFromContext(ctx),
+          duration: Date.now() - start,
+        });
+
+        throw error;
       }
-
-      return await inport(ctx, input);
     };
   };
 };

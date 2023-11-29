@@ -58,14 +58,6 @@ export const controllerReward: HTTPData[] = [
         properties: {
           name: { type: "string", description: "image name", default: "image nameee" },
           url: { type: "string", description: "url of image", default: "image yuerel" },
-          zzz: {
-            type: "object",
-            properties: {
-              aaaa: {
-                type: "number",
-              },
-            },
-          },
         },
       },
     },

@@ -47,26 +47,15 @@ export const handleRecording = (
 
   router.get("/status", async (req, res) => {
     //
-    res.json({
-      status: true,
-      command: recordingState.command,
-      query: recordingState.query,
-      replayableUsecases: repos.replayableUsecases.map((x) => x.name),
-    });
+    res.json({ enabled: recordingState.enabled });
     //
   });
 
   router.post("/status", async (req, res) => {
     //
+    recordingState.enabled = req.body.enabled as boolean;
 
-    try {
-      recordingState.command = req.body.command;
-      recordingState.query = req.body.query;
-
-      res.json({ message: `recording state is changed to ${status}` });
-    } catch (err) {
-      res.status(400).json({ message: (err as Error).message });
-    }
+    res.json({ message: `switch to recording ${recordingState.enabled}` });
     //
   });
 

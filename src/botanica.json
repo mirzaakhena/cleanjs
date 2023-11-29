@@ -1,0 +1,1073 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "App",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "description": "local",
+      "url": "http://localhost:3000"
+    },
+    {
+      "description": "production",
+      "url": "https://production.com"
+    }
+  ],
+  "tags": [
+    {
+      "name": "user",
+      "description": "data master user"
+    },
+    {
+      "name": "struk",
+      "description": "struk yang di upload user"
+    },
+    {
+      "name": "reward",
+      "description": "data master reward"
+    },
+    {
+      "name": "user_reward",
+      "description": "reward yang di redeem oleh user"
+    }
+  ],
+  "paths": {
+    "/api/v1/user": {
+      "get": {
+        "tags": ["user"],
+        "summary": "User Get All",
+        "description": "Get All Registered User",
+        "operationId": "userGetAll",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 1,
+              "description": "Page number for pagination"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 20,
+              "description": "Number of items per page"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "createdDate": {
+                            "type": "string"
+                          },
+                          "totalPoints": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "count": {
+                      "type": "number",
+                      "default": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["user"],
+        "summary": "User Create",
+        "description": "Registered new User",
+        "operationId": "userCreate",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "default": "mirza",
+                    "description": "name of the user"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "id of new user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Fail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/{userID}/status": {
+      "put": {
+        "tags": ["user"],
+        "summary": "User Change Status",
+        "description": "Change User Status",
+        "operationId": "userChangeStatus",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "0",
+              "description": "id of user"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "enum",
+                    "default": "NON_ACTIVE",
+                    "description": "status of user"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "id of user"
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "status of user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "302": {
+            "description": "Fail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "error message"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Fail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reward": {
+      "get": {
+        "tags": ["reward"],
+        "summary": "Reward Get All",
+        "description": "Get All exisiting Reward from Database",
+        "operationId": "rewardGetAll",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 1,
+              "description": "Page number for pagination"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 20,
+              "description": "Number of items per page"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": ""
+                          },
+                          "createdDate": {
+                            "type": "string",
+                            "description": ""
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": ""
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": ""
+                          },
+                          "point": {
+                            "type": "number",
+                            "default": 0,
+                            "description": ""
+                          },
+                          "stock": {
+                            "type": "number",
+                            "default": 0,
+                            "description": ""
+                          },
+                          "image": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "description": "image name"
+                              },
+                              "url": {
+                                "type": "string",
+                                "description": "url of image"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "count": {
+                      "type": "number",
+                      "default": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["reward"],
+        "summary": "Reward Create",
+        "description": "Insert new Reward to Database",
+        "operationId": "rewardCreate",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "default": "TITLE_REWARD",
+                    "description": "Title for reward"
+                  },
+                  "description": {
+                    "type": "string",
+                    "default": "DESC_REWARD",
+                    "description": "Description for reward"
+                  },
+                  "point": {
+                    "type": "number",
+                    "default": 10,
+                    "description": "the number of point for a reward"
+                  },
+                  "stock": {
+                    "type": "number",
+                    "default": 100,
+                    "description": "reward quantity"
+                  },
+                  "image": {
+                    "type": "object",
+                    "description": "image thumbnail",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "default": "image nameee",
+                        "description": "image name"
+                      },
+                      "url": {
+                        "type": "string",
+                        "default": "image yuerel",
+                        "description": "url of image"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "id of new reward"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Fail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reward/{rewardID}/redeem": {
+      "post": {
+        "tags": ["reward"],
+        "summary": "Reward Redeem",
+        "description": "Redeem Reward by User",
+        "operationId": "rewardRedeem",
+        "parameters": [
+          {
+            "name": "rewardID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "id of reward"
+            }
+          },
+          {
+            "name": "userID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "id of new reward"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Fail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/struk": {
+      "get": {
+        "tags": ["struk"],
+        "summary": "Struk Get All",
+        "description": "Retrieve All Uploaded Struk by User",
+        "operationId": "strukGetAll",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "approvalDate": {
+                            "type": "string"
+                          },
+                          "createdDate": {
+                            "type": "string",
+                            "description": ""
+                          },
+                          "billNumber": {
+                            "type": "string",
+                            "description": ""
+                          },
+                          "totalTransaksi": {
+                            "type": "number",
+                            "default": 0,
+                            "description": ""
+                          },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "default": "123",
+                                "description": "id of user"
+                              },
+                              "name": {
+                                "type": "string",
+                                "default": "aaa",
+                                "description": "name of user"
+                              },
+                              "createdDate": {
+                                "type": "string",
+                                "description": "registered user date"
+                              },
+                              "totalPoints": {
+                                "type": "number",
+                                "default": 0,
+                                "description": "point own by user"
+                              }
+                            }
+                          },
+                          "screenshot": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "description": "image name"
+                              },
+                              "url": {
+                                "type": "string",
+                                "description": "url of image"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "count": {
+                      "type": "number",
+                      "default": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["struk"],
+        "summary": "Struk Upload",
+        "description": "Upload a Struk by User",
+        "operationId": "strukUpload",
+        "parameters": [
+          {
+            "name": "somthing",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "billNumber": {
+                    "type": "string",
+                    "default": "BILL-123-456"
+                  },
+                  "totalTransaksi": {
+                    "type": "number",
+                    "default": 50000
+                  },
+                  "screenshot": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "default": "IMAGE_ID"
+                      },
+                      "name": {
+                        "type": "string",
+                        "default": "IMAGE_NAME"
+                      },
+                      "url": {
+                        "type": "string",
+                        "default": "IMAGE_URL"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "id of new struk"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Fail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/struk/{strukID}/approval": {
+      "post": {
+        "tags": ["struk"],
+        "summary": "Struk Approval",
+        "description": "Approve or Reject action to Struk",
+        "operationId": "strukApproval",
+        "parameters": [
+          {
+            "name": "strukID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "id of struk"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "enum",
+                    "default": "APPROVE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "id of struk"
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "status struk"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Fail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/userreward": {
+      "get": {
+        "tags": ["user_reward"],
+        "summary": "User Reward Get All",
+        "description": "Retrieve All Reward owned by User",
+        "operationId": "userRewardGetAll",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "approvalDate": {
+                            "type": "string"
+                          },
+                          "createdDate": {
+                            "type": "string",
+                            "description": ""
+                          },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "default": "123",
+                                "description": "id of user"
+                              },
+                              "name": {
+                                "type": "string",
+                                "default": "aaa",
+                                "description": "name of user"
+                              },
+                              "createdDate": {
+                                "type": "string",
+                                "description": "registered user date"
+                              },
+                              "totalPoints": {
+                                "type": "number",
+                                "default": 0,
+                                "description": "point own by user"
+                              }
+                            }
+                          },
+                          "reward": {
+                            "type": "object",
+                            "description": "",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": ""
+                              },
+                              "createdDate": {
+                                "type": "string",
+                                "description": ""
+                              },
+                              "title": {
+                                "type": "string",
+                                "description": ""
+                              },
+                              "description": {
+                                "type": "string",
+                                "description": ""
+                              },
+                              "point": {
+                                "type": "number",
+                                "default": 0,
+                                "description": ""
+                              },
+                              "stock": {
+                                "type": "number",
+                                "default": 0,
+                                "description": ""
+                              },
+                              "image": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "description": "image name"
+                                  },
+                                  "url": {
+                                    "type": "string",
+                                    "description": "url of image"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "count": {
+                      "type": "number",
+                      "default": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/userreward/{userRewardID}/approval": {
+      "post": {
+        "tags": ["user_reward"],
+        "summary": "User Reward Approval",
+        "description": "Approve or Reject Reward owned by User",
+        "operationId": "userRewardApproval",
+        "parameters": [
+          {
+            "name": "userRewardID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "0",
+              "description": "id of userReward"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "enum",
+                    "default": "APPROVE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "id of new reward"
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "status approval"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Fail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/userpoint": {
+      "get": {
+        "tags": ["user_point"],
+        "summary": "User Point Get All",
+        "description": "Retrieve All Point owned by User",
+        "operationId": "userPointGetAll",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "default": "123",
+                                "description": "id of user"
+                              },
+                              "name": {
+                                "type": "string",
+                                "default": "aaa",
+                                "description": "name of user"
+                              },
+                              "createdDate": {
+                                "type": "string",
+                                "description": "registered user date"
+                              },
+                              "totalPoints": {
+                                "type": "number",
+                                "default": 0,
+                                "description": "point own by user"
+                              }
+                            }
+                          },
+                          "point": {
+                            "type": "number",
+                            "default": 0,
+                            "description": "point of user"
+                          },
+                          "createdDate": {
+                            "type": "string",
+                            "description": ""
+                          }
+                        }
+                      }
+                    },
+                    "count": {
+                      "type": "number",
+                      "default": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {}
+}
