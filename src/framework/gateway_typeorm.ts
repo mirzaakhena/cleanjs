@@ -1,6 +1,6 @@
 import { DataSource, EntityTarget, FindOptionsOrder, FindOptionsRelations, FindOptionsWhere } from "typeorm";
 import { Context, Middleware } from "./core.js";
-import { BaseEntity, BaseFindManyFilter, FindManyEntity, FindOneEntity, Identifier, SaveEntity } from "./repo.js";
+import { BaseEntity, BaseFindManyFilter, DeleteEntity, FindManyEntity, FindOneEntity, Identifier, SaveEntity } from "./repo.js";
 
 const TRANSACTION_FIELD = "transaction";
 
@@ -47,12 +47,19 @@ export const getManager = (ctx: Context, ds: DataSource) => {
   return ctx.data?.[TRANSACTION_FIELD] ? (ctx.data[TRANSACTION_FIELD] as DataSource) : ds;
 };
 
-export const saveEntity = <U extends Identifier = string, T extends BaseEntity<U> = BaseEntity<U>>(ds: DataSource, entityClass: EntityTarget<T>): SaveEntity<T, U> => {
+export const saveEntity = <U extends Identifier = string, T extends BaseEntity<U> = BaseEntity<U>>(ds: DataSource, entityClass: EntityTarget<T>): SaveEntity<T> => {
   return async (ctx, req) => {
     await getManager(ctx, ds) //
       .getRepository(entityClass)
       .save(req);
-    return req.id;
+  };
+};
+
+export const deleteEntity = <U extends object>(ds: DataSource, entityClass: EntityTarget<U>): DeleteEntity<U> => {
+  return async (ctx, req) => {
+    await getManager(ctx, ds) //
+      .getRepository(entityClass)
+      .delete(req);
   };
 };
 

@@ -1,7 +1,7 @@
 import express from "express";
 import { RequestWithContext } from "../../framework/controller_express.js";
 
-export const handleUser = () => {
+export const handleAuthorization = () => {
   return (req: RequestWithContext, res: express.Response, next: express.NextFunction) => {
     //
 

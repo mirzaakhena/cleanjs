@@ -1,5 +1,5 @@
 import express from "express";
-import { camelToPascalWithSpace, generateID } from "../utility.js";
+import { camelToPascalWithSpace, generateID } from "./helper.js";
 import { Context, Inport, createController } from "./core.js";
 import { HTTPData } from "./data_http.js";
 
@@ -188,8 +188,6 @@ const simpleController = <T = any>(
             throw new Error(`local function ${localVar.funcName} is not defined`);
           }
 
-          console.log(">>>>", key, await func(ctx, httpData.local[key].input));
-
           payload = {
             ...payload,
             [key]: await func(ctx, httpData.local[key].input), // checkLocalData(ctx, key, httpData.local[key]),
@@ -220,7 +218,7 @@ const checkDataType = (type: string, defaultValue: any, value: any): any => {
     return extractNumber(value, defaultValue ?? undefined);
   }
 
-  if (type === "string") {
+  if (type === "string" || type === "enum") {
     return value === undefined ? defaultValue ?? undefined : (value as string);
   }
 
@@ -228,7 +226,7 @@ const checkDataType = (type: string, defaultValue: any, value: any): any => {
     return value === undefined ? defaultValue ?? undefined : extractBoolean(value);
   }
 
-  if (type === "array_of_string") {
+  if (type === "array") {
     return extractArrayString(value);
   }
 

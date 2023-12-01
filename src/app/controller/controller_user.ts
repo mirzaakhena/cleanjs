@@ -15,23 +15,14 @@ export const controllerUser: HTTPData[] = [
       200: {
         description: "Success",
         content: {
-          items: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                id: { type: "string" },
-                name: { type: "string" },
-                createdDate: { type: "string" },
-                totalPoints: { type: "string" },
-                status: { type: "string" },
-              },
-            },
-          },
-          count: { type: "number", default: 0 },
+          name: { type: "string" },
+          createdDate: { type: "string" },
+          totalPoints: { type: "string" },
+          status: { type: "string" },
         },
       },
     },
+    responseAsTable: true,
   },
   {
     description: "Registered new User",

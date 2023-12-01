@@ -1,18 +1,16 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import path from "path";
 
 import { DataSource } from "typeorm";
 import { controllerCollection } from "./app/controller/_controller.js";
 import { collectSimpleController, middlewareContext, printController } from "./framework/controller_express.js";
-import { Middleware, bootstrap } from "./framework/core.js";
+import { Middleware, bootstrap, createController } from "./framework/core.js";
 import { transactionMiddleware } from "./framework/gateway_typeorm.js";
 import { recordingInit, recordingMiddleware, setDescriptionRecording } from "./plugin/recording/recording.js";
 
 import swaggerUi from "swagger-ui-express";
-import { fileURLToPath } from "url";
-import { handleError, handleUser } from "./app/controller/_middleware.js";
+import { handleAuthorization, handleError } from "./app/controller/_middleware.js";
 import { undeterministicFunctions } from "./app/controller/_undeterministic.js";
 import { gateways } from "./app/gateway/_gateway.js";
 import { usecases } from "./app/usecases/_usecase.js";
@@ -63,7 +61,20 @@ export const main = async () => {
       frameworkMiddleware.push(transactionMiddleware(ds));
     }
 
-    const controllers = [...collectSimpleController(mainRouter, controllerCollection, undeterministicFunctions)];
+    const helloRouter = express.Router();
+
+    const helloController = (router: express.Router) => {
+      return createController([], (x) => {
+        //
+        helloRouter.get("/hello", (req, res) => res.json({ message: "helloworld" }));
+      });
+    };
+
+    const controllers = [
+      //
+      ...collectSimpleController(mainRouter, controllerCollection, undeterministicFunctions),
+      helloController(helloRouter),
+    ];
 
     const usecaseWithGatewayInstance = bootstrap(
       //
@@ -78,36 +89,22 @@ export const main = async () => {
     const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    app.use(
-      cors({
-        exposedHeaders: ["TraceId", "Date"],
-      })
-    );
-    app.use(middlewareContext());
-    app.use(handleUser());
-    app.use(mainRouter);
+    app.use(cors({ exposedHeaders: ["TraceId", "Date"] }));
 
-    // recording_ui
-    {
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = path.dirname(__filename);
-      const distPath = path.join(__dirname, "plugin/recording/dist");
-
-      isDevMode && app.use("/recording", recordingInit(recordingRouter, ds, usecaseWithGatewayInstance));
-
-      app.get("/recording/ui", (req, res) => res.sendFile(path.join(distPath, "index.html")));
-      app.use("/assets", express.static(path.join(distPath, "assets")));
-    }
-
-    app.use(handleError());
-
-    {
+    if (isDevMode) {
+      app.use("/recording", recordingInit(recordingRouter, ds, usecaseWithGatewayInstance));
       const openApiObj = controllerToOpenAPI(controllerCollection);
       isDevMode && app.use("/controllers", (req, res) => res.json(groupingControllerWithTag(controllerCollection)));
       isDevMode && app.use("/openapi", (req, res) => res.json(openApiObj));
       isDevMode && app.use("/swagger", swaggerUi.serve, swaggerUi.setup(openApiObj));
       // isDevMode && app.use("/redocly", redocly());
     }
+
+    app.use(middlewareContext());
+    app.use(handleAuthorization());
+    app.use(mainRouter);
+
+    app.use(handleError());
 
     printController(controllerCollection);
 
@@ -138,3 +135,12 @@ const experimental = () => {
 
 main();
 // experimental();
+
+// recording_ui
+// {
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+// const distPath = path.join(__dirname, "plugin/recording/dist");
+// app.get("/recording/ui", (req, res) => res.sendFile(path.join(distPath, "index.html")));
+// app.use("/assets", express.static(path.join(distPath, "assets")));
+// }

@@ -15,31 +15,15 @@ export const controllerReward: HTTPData[] = [
       200: {
         description: "Success",
         content: {
-          items: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                id: { type: "string", description: "" },
-                createdDate: { type: "string", description: "" },
-                title: { type: "string", description: "" },
-                description: { type: "string", description: "" },
-                point: { type: "number", description: "", default: 0 },
-                stock: { type: "number", description: "", default: 0 },
-                image: {
-                  type: "object",
-                  properties: {
-                    name: { type: "string", description: "image name" },
-                    url: { type: "string", description: "url of image" },
-                  },
-                },
-              },
-            },
-          },
-          count: { type: "number", default: 0 },
+          createdDate: { type: "string", description: "" },
+          title: { type: "string", description: "" },
+          description: { type: "string", description: "" },
+          point: { type: "number", description: "", default: 0 },
+          stock: { type: "number", description: "", default: 0 },
         },
       },
     },
+    responseAsTable: true,
   },
   {
     description: "Insert new Reward to Database",

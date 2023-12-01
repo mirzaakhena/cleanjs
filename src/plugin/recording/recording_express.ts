@@ -1,7 +1,7 @@
 import express from "express";
 import { extractArrayString, extractBoolean, extractNumber } from "../../framework/controller_express.js";
 import { Outport, RequestType, UsecaseWithGatewayInstance } from "../../framework/core.js";
-import { generateID } from "../../utility.js";
+import { generateID } from "../../framework/helper.js";
 import {
   DataRecordingPlaylist,
   DeleteAllRecording,
@@ -76,7 +76,7 @@ export const handleRecording = (
       // dateEnd: req.query.dateEnd,
     });
 
-    res.json({ items, count });
+    res.json({ enabled: recordingState.enabled, items, count });
   });
 
   router.get("/record/:recordId", async (req, res) => {

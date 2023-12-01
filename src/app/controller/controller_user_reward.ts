@@ -15,50 +15,13 @@ export const controllerUserReward: HTTPData[] = [
       200: {
         description: "Success",
         content: {
-          items: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                id: { type: "string" },
-                status: { type: "string" },
-                approvalDate: { type: "string" },
-                createdDate: { type: "string", description: "" },
-                user: {
-                  type: "object",
-                  properties: {
-                    id: { type: "string", default: "123", description: "id of user" },
-                    name: { type: "string", default: "aaa", description: "name of user" },
-                    createdDate: { type: "string", description: "registered user date" },
-                    totalPoints: { type: "number", default: 0, description: "point own by user" },
-                  },
-                },
-                reward: {
-                  type: "object",
-                  description: "",
-                  properties: {
-                    id: { type: "string", description: "" },
-                    createdDate: { type: "string", description: "" },
-                    title: { type: "string", description: "" },
-                    description: { type: "string", description: "" },
-                    point: { type: "number", description: "", default: 0 },
-                    stock: { type: "number", description: "", default: 0 },
-                    image: {
-                      type: "object",
-                      properties: {
-                        name: { type: "string", description: "image name" },
-                        url: { type: "string", description: "url of image" },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-          count: { type: "number", default: 0 },
+          status: { type: "string" },
+          approvalDate: { type: "string" },
+          createdDate: { type: "string", description: "" },
         },
       },
     },
+    responseAsTable: true,
   },
   {
     description: "Approve or Reject Reward owned by User",

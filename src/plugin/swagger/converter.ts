@@ -1,6 +1,6 @@
 import { HTTPData, ResponseCode, ResponseType } from "../../framework/data_http.js";
 import { InputType } from "../../framework/data_type.js";
-import { camelToPascalWithSpace } from "../../utility.js";
+import { camelToPascalWithSpace } from "../../framework/helper.js";
 import { OpenAPIObject, OperationObject, ParameterObject, PathItemObject, ResponseObject, SchemaObject } from "./schema.js";
 
 export const NewOpenAPI = (): OpenAPIObject => {
@@ -37,24 +37,24 @@ export const NewOpenAPI = (): OpenAPIObject => {
         url: "https://production.com",
       },
     ],
-    tags: [
-      {
-        name: "user",
-        description: "data master user",
-      },
-      {
-        name: "struk",
-        description: "struk yang di upload user",
-      },
-      {
-        name: "reward",
-        description: "data master reward",
-      },
-      {
-        name: "user_reward",
-        description: "reward yang di redeem oleh user",
-      },
-    ],
+    // tags: [
+    //   {
+    //     name: "user",
+    //     description: "data master user",
+    //   },
+    //   {
+    //     name: "struk",
+    //     description: "struk yang di upload user",
+    //   },
+    //   {
+    //     name: "reward",
+    //     description: "data master reward",
+    //   },
+    //   {
+    //     name: "user_reward",
+    //     description: "reward yang di redeem oleh user",
+    //   },
+    // ],
     paths: {},
     components: {},
   };

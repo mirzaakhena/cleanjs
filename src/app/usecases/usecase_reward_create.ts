@@ -4,7 +4,7 @@ import { Image } from "../model/image.js";
 import { Reward, RewardID } from "../model/reward.js";
 
 type Outport = {
-  saveReward: SaveEntity<Reward, RewardID>;
+  saveReward: SaveEntity<Reward>;
 };
 
 export type InportRequest = {

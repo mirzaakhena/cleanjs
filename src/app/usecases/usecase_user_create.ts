@@ -3,7 +3,7 @@ import { SaveEntity } from "../../framework/repo.js";
 import { User, UserID } from "../model/user.js";
 
 type Outport = {
-  saveUser: SaveEntity<User, UserID>;
+  saveUser: SaveEntity<User>;
 };
 
 export type InportRequest = {

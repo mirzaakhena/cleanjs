@@ -7,9 +7,9 @@ import { UserPoint, UserPointID } from "../model/user_point.js";
 
 type Outport = {
   findOneStruk: FindOneEntity<Struk, StrukID>;
-  saveStruk: SaveEntity<Struk, StrukID>;
-  saveUserPoint: SaveEntity<UserPoint, UserPointID>;
-  saveUser: SaveEntity<User, UserID>;
+  saveStruk: SaveEntity<Struk>;
+  saveUserPoint: SaveEntity<UserPoint>;
+  saveUser: SaveEntity<User>;
 };
 
 export type InportRequest = {

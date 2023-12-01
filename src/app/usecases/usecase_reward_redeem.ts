@@ -7,7 +7,7 @@ import { UserReward, UserRewardID } from "../model/user_reward.js";
 type Outport = {
   findOneUser: FindOneEntity<User, UserID>;
   findOneReward: FindOneEntity<Reward, RewardID>;
-  saveUserReward: SaveEntity<UserReward, UserRewardID>;
+  saveUserReward: SaveEntity<UserReward>;
 };
 
 export type InportRequest = {

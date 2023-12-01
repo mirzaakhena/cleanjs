@@ -4,7 +4,7 @@ import { User, UserID, UserStatus } from "../model/user.js";
 
 type Outport = {
   findOneUser: FindOneEntity<User, UserID>;
-  saveUser: SaveEntity<User, UserID>;
+  saveUser: SaveEntity<User>;
 };
 
 export type InportRequest = {

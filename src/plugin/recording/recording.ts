@@ -116,10 +116,12 @@ const prepareRecorder = (ctx: Context) => {
     return;
   }
 
-  ctx.data[RECORDING_FIELD] = {
-    functions: [],
-    description: "meoong",
-  };
+  if (!ctx.data[RECORDING_FIELD]) {
+    ctx.data[RECORDING_FIELD] = {
+      functions: [],
+      description: "", // TODO: meoong ???
+    };
+  }
 };
 
 const recordValue = (ctx: Context, funcType: FunctionType, payload: RecordAndStorePayload) => {
