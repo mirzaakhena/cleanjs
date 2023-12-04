@@ -1,24 +1,18 @@
 import { BaseFindManyFilter, Identifier } from "../../framework/repo.js";
 import { Approval, ApprovalStatus } from "./approval.js";
-import { Image } from "./image.js";
 import { User, UserID } from "./user.js";
 
-// =============================================================================================================================
+export type ReceiptID = Identifier;
 
-export type StrukID = Identifier;
-
-export class Struk extends Approval<StrukID> {
+export class Receipt extends Approval<ReceiptID> {
   //
   user: User;
   createdDate: Date;
   billNumber: string;
   totalTransaksi: number;
-  screenshot: Image;
 }
 
-// =============================================================================================================================
-
-export type FindManyStrukFilter = BaseFindManyFilter & {
+export type FindManyReceiptFilter = BaseFindManyFilter & {
   //
   userID: UserID;
   billNumber: string;

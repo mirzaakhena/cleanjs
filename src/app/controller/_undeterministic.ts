@@ -1,5 +1,5 @@
 import { Context } from "../../framework/core.js";
-import { generateID } from "../../utility.js";
+import { generateID } from "../../framework/helper.js";
 
 export const undeterministicFunctions = {
   dateNow: async (ctx: Context, _: void) => {

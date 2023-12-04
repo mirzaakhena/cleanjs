@@ -72,8 +72,6 @@ export const handleRecording = (
       isSuccess: extractBoolean(req.query.isSuccess),
       page: extractNumber(req.query.page),
       size: extractNumber(req.query.size),
-      // dateStart: req.query.dateStart,
-      // dateEnd: req.query.dateEnd,
     });
 
     res.json({ enabled: recordingState.enabled, items, count });

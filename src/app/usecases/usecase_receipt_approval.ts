@@ -1,13 +1,14 @@
 import { Usecase } from "../../framework/core.js";
 import { FindOneEntity, SaveEntity } from "../../framework/repo.js";
 import { ApprovalActionStatus, ApprovalStatus } from "../model/approval.js";
-import { Struk, StrukID } from "../model/struk.js";
+import { Receipt, ReceiptID } from "../model/receipt.js";
+
 import { User, UserID } from "../model/user.js";
 import { UserPoint, UserPointID } from "../model/user_point.js";
 
 type Outport = {
-  findOneStruk: FindOneEntity<Struk, StrukID>;
-  saveStruk: SaveEntity<Struk>;
+  findOneReceipt: FindOneEntity<Receipt, ReceiptID>;
+  saveReceipt: SaveEntity<Receipt>;
   saveUserPoint: SaveEntity<UserPoint>;
   saveUser: SaveEntity<User>;
 };
@@ -15,20 +16,20 @@ type Outport = {
 export type InportRequest = {
   now: Date;
   newUserPointID: UserPointID;
-  strukID: StrukID;
+  receiptID: ReceiptID;
   status: ApprovalActionStatus;
 };
 
 export type InportResponse = {
-  id: StrukID;
+  id: ReceiptID;
   status: ApprovalStatus;
 };
 
-export const strukApproval: Usecase<Outport, InportRequest, InportResponse> = {
+export const receiptApproval: Usecase<Outport, InportRequest, InportResponse> = {
   gatewayNames: [
     //
-    "saveStruk",
-    "findOneStruk",
+    "saveReceipt",
+    "findOneReceipt",
     "saveUserPoint",
     "saveUser",
   ],
@@ -40,19 +41,19 @@ export const strukApproval: Usecase<Outport, InportRequest, InportResponse> = {
 
       // TODO validasi req.adminID
 
-      // cari  struk
-      const objUS = await o.findOneStruk(ctx, req.strukID);
+      // cari  receipt
+      const objUS = await o.findOneReceipt(ctx, req.receiptID);
       if (!objUS) {
-        throw new Error("struk not found");
+        throw new Error("receipt not found");
       }
 
       if (objUS.status !== "PENDING") {
-        throw new Error(`struk has been ${objUS.status} before`);
+        throw new Error(`receipt has been ${objUS.status} before`);
       }
 
-      // ubah status Struk
+      // ubah status Receipt
       const status = objUS.updateStatus(req.now, req.status);
-      await o.saveStruk(ctx, objUS);
+      await o.saveReceipt(ctx, objUS);
 
       // Jika di reject langsung keluar saja
       if (status === "REJECTED") {

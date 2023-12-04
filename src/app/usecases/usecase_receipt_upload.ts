@@ -1,31 +1,29 @@
 import { Usecase } from "../../framework/core.js";
 import { FindOneEntity, SaveEntity } from "../../framework/repo.js";
-import { Image } from "../model/image.js";
-import { Struk, StrukID } from "../model/struk.js";
+import { Receipt, ReceiptID } from "../model/receipt.js";
 import { User, UserID } from "../model/user.js";
 
 type Outport = {
   findOneUser: FindOneEntity<User, UserID>;
-  saveStruk: SaveEntity<Struk>;
+  saveReceipt: SaveEntity<Receipt>;
 };
 
 export type InportRequest = {
-  newStrukID: StrukID;
+  newReceiptID: ReceiptID;
   userID: UserID;
   now: Date;
   billNumber: string;
   totalTransaksi: number;
-  screenshot: Image;
 };
 
 export type InportResponse = {
-  id: StrukID;
+  id: ReceiptID;
 };
 
-export const strukUpload: Usecase<Outport, InportRequest, InportResponse> = {
+export const receiptUpload: Usecase<Outport, InportRequest, InportResponse> = {
   gatewayNames: [
     //
-    "saveStruk",
+    "saveReceipt",
     "findOneUser",
   ],
   execute: (o) => {
@@ -43,21 +41,20 @@ export const strukUpload: Usecase<Outport, InportRequest, InportResponse> = {
         throw new Error("User is non active");
       }
 
-      const obj = new Struk();
+      const obj = new Receipt();
       {
-        obj.id = req.newStrukID;
+        obj.id = req.newReceiptID;
         obj.createdDate = req.now;
         obj.user = user;
         obj.billNumber = req.billNumber;
         obj.totalTransaksi = req.totalTransaksi;
-        obj.screenshot = req.screenshot;
         obj.status = "PENDING";
         obj.approvalDate = null;
       }
 
-      await o.saveStruk(ctx, obj);
+      await o.saveReceipt(ctx, obj);
 
-      return { id: req.newStrukID };
+      return { id: req.newReceiptID };
     };
   },
 };

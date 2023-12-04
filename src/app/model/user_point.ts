@@ -1,8 +1,6 @@
 import { BaseEntity, BaseFindManyFilter, Identifier } from "../../framework/repo.js";
 import { User } from "./user.js";
 
-// =============================================================================================================================
-
 export type UserPointID = Identifier;
 
 export class UserPoint extends BaseEntity<UserPointID> {
@@ -13,10 +11,6 @@ export class UserPoint extends BaseEntity<UserPointID> {
   // TODO kalau dikurangi dipakai untuk redeem apa?
 }
 
-// =============================================================================================================================
-
 export type FindManyUserPointFilter = BaseFindManyFilter & {
   //
 };
-
-// =============================================================================================================================

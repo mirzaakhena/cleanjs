@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import { Image } from "../model/image.js";
 import { Reward as IReward } from "../model/reward.js";
 
 @Entity()
@@ -24,7 +23,5 @@ export class Reward extends IReward {
   @Column({ type: "int" })
   declare stock: number;
 
-  @Column({ type: "jsonb", nullable: true })
-  declare image: Image;
   //
 }

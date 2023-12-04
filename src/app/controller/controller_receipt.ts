@@ -1,12 +1,12 @@
 import { HTTPData } from "../../framework/data_http.js";
 
-export const controllerStruk: HTTPData[] = [
+export const controllerReceipt: HTTPData[] = [
   {
-    description: "Retrieve All Uploaded Struk by User",
+    description: "Retrieve All Uploaded Receipt by User",
     method: "get",
-    path: "/api/v1/struk",
-    usecase: "strukGetAll",
-    tag: "struk",
+    path: "/api/v1/receipt",
+    usecase: "receiptGetAll",
+    tag: "receipt",
     query: {
       page: { type: "number", default: 1 },
       size: { type: "number", default: 20 },
@@ -26,11 +26,11 @@ export const controllerStruk: HTTPData[] = [
     responseAsTable: true,
   },
   {
-    description: "Upload a Struk by User",
+    description: "Upload a Receipt by User",
     method: "post",
-    path: "/api/v1/struk",
-    usecase: "strukUpload",
-    tag: "struk",
+    path: "/api/v1/receipt",
+    usecase: "receiptUpload",
+    tag: "receipt",
     body: {
       billNumber: { type: "string", default: "BILL-123-456" }, // TODO remove default later
       totalTransaksi: { type: "number", default: 50000 }, // TODO remove default later
@@ -56,14 +56,14 @@ export const controllerStruk: HTTPData[] = [
       userID: { type: "string" },
     },
     local: {
-      newStrukID: { funcName: "randomString" },
+      newReceiptID: { funcName: "randomString" },
       now: { funcName: "dateNow" },
     },
     response: {
       200: {
         description: "Success",
         content: {
-          id: { type: "string", description: "id of new struk" },
+          id: { type: "string", description: "id of new receipt" },
         },
       },
       400: {
@@ -75,13 +75,13 @@ export const controllerStruk: HTTPData[] = [
     },
   },
   {
-    description: "Approve or Reject action to Struk",
+    description: "Approve or Reject action to Receipt",
     method: "post",
-    path: "/api/v1/struk/:strukID/approval",
-    usecase: "strukApproval",
-    tag: "struk",
+    path: "/api/v1/receipt/:receiptID/approval",
+    usecase: "receiptApproval",
+    tag: "receipt",
     param: {
-      strukID: { type: "string", description: "id of struk" },
+      receiptID: { type: "string", description: "id of receipt" },
     },
     body: {
       status: { type: "enum", default: "APPROVE", enum: ["APPROVE", "REJECT"] }, // TODO remove default later
@@ -94,8 +94,8 @@ export const controllerStruk: HTTPData[] = [
       200: {
         description: "Success",
         content: {
-          id: { type: "string", description: "id of struk" },
-          status: { type: "string", description: "status struk" },
+          id: { type: "string", description: "id of receipt" },
+          status: { type: "string", description: "status receipt" },
         },
       },
       400: {

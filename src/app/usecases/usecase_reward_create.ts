@@ -1,6 +1,5 @@
 import { Usecase } from "../../framework/core.js";
 import { SaveEntity } from "../../framework/repo.js";
-import { Image } from "../model/image.js";
 import { Reward, RewardID } from "../model/reward.js";
 
 type Outport = {
@@ -14,7 +13,6 @@ export type InportRequest = {
   description: string;
   point: number;
   stock: number;
-  image: Image;
 };
 
 export type InportResponse = {
@@ -40,7 +38,6 @@ export const rewardCreate: Usecase<Outport, InportRequest, InportResponse> = {
         obj.description = req.description;
         obj.point = req.point;
         obj.stock = req.stock;
-        obj.image = req.image;
       }
 
       await o.saveReward(ctx, obj);

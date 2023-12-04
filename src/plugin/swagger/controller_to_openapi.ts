@@ -1,9 +1,9 @@
 import { HTTPData, ResponseCode, ResponseType } from "../../framework/data_http.js";
 import { InputType } from "../../framework/data_type.js";
 import { camelToPascalWithSpace } from "../../framework/helper.js";
-import { OpenAPIObject, OperationObject, ParameterObject, PathItemObject, ResponseObject, SchemaObject } from "./schema.js";
+import { OpenAPIObject, OperationObject, ParameterObject, PathItemObject, ResponseObject, SchemaObject } from "./openapi_schema.js";
 
-export const NewOpenAPI = (): OpenAPIObject => {
+const NewOpenAPI = (): OpenAPIObject => {
   return {
     openapi: "3.0.0",
     info: {
@@ -60,7 +60,7 @@ export const NewOpenAPI = (): OpenAPIObject => {
   };
 };
 
-function extractPath(input: HTTPData, openApiObj: OpenAPIObject): ParameterObject[] {
+function extractPath(input: HTTPData): ParameterObject[] {
   //
   let params: ParameterObject[] = [];
 
@@ -189,7 +189,7 @@ function handlePropertiesObject(input: Record<string, InputType>) {
   return schemaObj;
 }
 
-export function handleResponse(input: Record<ResponseCode, ResponseType>) {
+function handleResponse(input: Record<ResponseCode, ResponseType>) {
   type ResponseByCode = {
     [statusCode: string]: ResponseObject;
   };
@@ -218,43 +218,46 @@ export function handleResponse(input: Record<ResponseCode, ResponseType>) {
   return responseByCode;
 }
 
-export function controllerToSwagger(input: HTTPData, openApiObj: OpenAPIObject) {
-  //
+export const controllerToOpenAPI = (httpDatas: HTTPData[]): OpenAPIObject => {
+  const openApiObj = NewOpenAPI();
+  for (const input of httpDatas) {
+    //
 
-  let path = input.path;
+    let path = input.path;
 
-  // replace url path from :value into {value}
-  if (input.param) {
-    Object.keys(input.param).forEach((param) => {
-      path = path.replace(`:${param}`, `{${param}}`);
-    });
-  }
+    // replace url path from :value into {value}
+    if (input.param) {
+      Object.keys(input.param).forEach((param) => {
+        path = path.replace(`:${param}`, `{${param}}`);
+      });
+    }
 
-  openApiObj.paths = {
-    ...openApiObj.paths,
-    [path]: {
-      ...openApiObj.paths[path],
-      [input.method]: {
-        tags: [input.tag],
-        summary: camelToPascalWithSpace(input.usecase),
-        description: input.description ? input.description : input.usecase,
-        operationId: input.usecase,
-        parameters: extractPath(input, openApiObj),
-        requestBody: input.body && {
-          description: "", // TODO input it later
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                properties: handlePropertiesObject(input.body),
+    openApiObj.paths = {
+      ...openApiObj.paths,
+      [path]: {
+        ...openApiObj.paths[path],
+        [input.method]: {
+          tags: [input.tag],
+          summary: camelToPascalWithSpace(input.usecase),
+          description: input.description ? input.description : input.usecase,
+          operationId: input.usecase,
+          parameters: extractPath(input),
+          requestBody: input.body && {
+            description: "", // TODO input it later
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: handlePropertiesObject(input.body),
+                },
               },
             },
           },
-        },
-        responses: input.response && handleResponse(input.response),
-      } as OperationObject,
-    } as PathItemObject,
-  };
+          responses: input.response && handleResponse(input.response),
+        } as OperationObject,
+      } as PathItemObject,
+    };
+  }
 
-  //
-}
+  return openApiObj;
+};

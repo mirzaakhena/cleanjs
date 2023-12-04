@@ -1,19 +1,13 @@
 import express from "express";
-import { camelToPascalWithSpace, generateID } from "./helper.js";
 import { Context, Inport, createController } from "./core.js";
 import { HTTPData } from "./data_http.js";
-
-export type HTTPDataResponse = {
-  headers: Record<string, string>;
-  statusCode: number;
-  body: any;
-};
+import { camelToPascalWithSpace, generateID } from "./helper.js";
 
 export type RequestWithContext = express.Request & {
   ctx?: Context;
 };
 
-export const middlewareContext = () => {
+export const middlewareContextWithTraceId = () => {
   return (req: RequestWithContext, res: express.Response, next: express.NextFunction) => {
     req.ctx = {
       data: {},
@@ -52,87 +46,7 @@ export const extractBoolean = (value: any): boolean | undefined => {
   return value === "true" ? true : value === "false" ? false : undefined;
 };
 
-// export type ResponseCode = 200 | 201 | 302 | 400 | 401 | number;
-
-// export type Methods = "all" | "get" | "post" | "put" | "delete" | "patch" | "options" | "head";
-
-// export type DataType =
-//   | "string" //
-//   | "boolean" //
-//   | "number" //
-//   | "array_of_string"; //
-
-// export type QueryType = {
-//   type: DataType;
-//   enum?: string[];
-//   properties?: Record<string, QueryType>;
-//   default?: any;
-//   description?: string;
-//   required?: boolean;
-// };
-
-// export type FuncName = "dateNow" | "assign" | "randomString" | "contextData";
-
-// export type FuncType = { funcName: string; input?: any };
-
-// export type HeaderType = {
-//   location: string;
-// };
-
-// export type ResponseType = {
-//   description?: string;
-//   summary?: string;
-//   headers?: HeaderType;
-//   content: InputType;
-// };
-
-// export type HTTPData = {
-//   description?: string;
-//   summary?: string;
-//   usecase: string;
-//   method: Methods;
-//   path: string;
-//   tag: string;
-//   query?: InputType;
-//   param?: InputType;
-//   header?: InputType;
-//   body?: InputType;
-//   local?: Record<string, FuncType>;
-//   response?: Record<ResponseCode, ResponseType>;
-// };
-
-// //================================================================
-
-// type GeneralInfoType = {
-//   default?: any;
-//   summary?: string;
-//   description?: string;
-//   required?: boolean;
-// };
-
-// export type EnumerableField = GeneralInfoType & {
-//   type: "string" | "number" | "boolean" | "date";
-//   enum?: (string | boolean | number)[];
-//   textAreaLine?: number;
-//   maxLength?: number;
-//   isPassword?: boolean;
-// };
-
-// export type ObjectField = GeneralInfoType & {
-//   type: "object";
-//   properties: Record<string, EnumerableField | ObjectField | ArrayField>;
-// };
-
-// export type ArrayField = GeneralInfoType & {
-//   type: "array";
-//   items: EnumerableField | ObjectField | ArrayField;
-// };
-
-// export type InputType = Record<string, EnumerableField | ObjectField | ArrayField>;
-
-//================================================================
-
-const simpleController = <T = any>(
+export const constructDeclarativeController = <T = any>(
   //
   router: express.IRouter,
   httpData: HTTPData,
@@ -207,9 +121,9 @@ const simpleController = <T = any>(
   });
 };
 
-export const collectSimpleController = (router: express.Router, httpDatas: HTTPData[], localFunctions: Record<string, Inport>) => {
-  return httpDatas.map((x) => simpleController(router, x, localFunctions));
-};
+// export const collectSimpleController_ = (router: express.Router, httpDatas: HTTPData[], localFunctions: Record<string, Inport>) => {
+//   return httpDatas.map((x) => constructDeclarativeController(router, x, localFunctions));
+// };
 
 const checkDataType = (type: string, defaultValue: any, value: any): any => {
   //
@@ -278,54 +192,3 @@ export const printController = (httpDatas: HTTPData[]) => {
     })
   );
 };
-
-// TODO move it to utility
-// export const printRouteToConsole = (url: string, router: express.Router) => {
-//   //
-
-//   let route;
-//   let routes: any = [];
-
-//   let maxLength = 0;
-
-//   router.stack.forEach(function (middleware) {
-//     if (middleware.route) {
-//       // routes registered directly on the app
-//       routes.push(middleware.route);
-//       if (maxLength < middleware.route.path.toString().length) {
-//         maxLength = middleware.route.path.toString().length;
-//       }
-//     } else if (middleware.name === "router") {
-//       // router middleware
-//       middleware.handle.stack.forEach(function (handler: any) {
-//         route = handler.route;
-//         route && routes.push(route);
-//       });
-//     }
-//   });
-
-//   console.table(
-//     routes.map((r: any) => {
-//       return {
-//         method: Object.keys(r.methods)[0].padStart(6).toUpperCase(),
-//         path: `${url}${r.path.toString().padEnd(maxLength).substring(0)}`,
-//       };
-//     })
-//   );
-// };
-
-// // Sample how to create basic controller
-// createController(["approvalFlow"], (x) => {
-//   router.get("/zunan", async (req, res, next) => {
-//     try {
-//       //
-//       const ctx = getRequestWithContext(req);
-//       const result = await x.approvalFlow(ctx, 11);
-//       res.json(result);
-//       //
-//     } catch (error) {
-//       next(error);
-//     }
-//   });
-//   //
-// })

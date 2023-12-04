@@ -1,12 +1,11 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { ApprovalStatus } from "../model/approval.js";
-import { Image } from "../model/image.js";
 import { User as IUser } from "../model/user.js";
-import { Struk as IStruk } from "../model/struk.js";
+import { Receipt as IReceipt } from "../model/receipt.js";
 import { User } from "./gateway_user.js";
 
 @Entity()
-export class Struk extends IStruk {
+export class Receipt extends IReceipt {
   //
 
   @PrimaryColumn({ type: "varchar", length: 20 })
@@ -30,9 +29,6 @@ export class Struk extends IStruk {
 
   @Column({ type: "int" })
   declare totalTransaksi: number;
-
-  @Column({ type: "jsonb", nullable: true })
-  declare screenshot: Image;
 
   //
 }

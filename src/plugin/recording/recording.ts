@@ -18,15 +18,11 @@ const RECORDING_FIELD = "recording";
 
 type RecordingState = {
   enabled: boolean;
-  // command: boolean;
-  // query: boolean;
   saveRecording: SaveRecording | null;
 };
 
 export const recordingState: RecordingState = {
   enabled: false,
-  // command: false,
-  // query: false,
   saveRecording: null, //ImplSaveRecordingToFile(FOLDER_NAME),
 };
 

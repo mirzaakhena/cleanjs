@@ -2,7 +2,7 @@ import { DataSource, FindOptionsRelations } from "typeorm";
 import { Gateways } from "../../framework/core.js";
 import { findManyEntity, findOneEntity, saveEntity } from "../../framework/gateway_typeorm.js";
 import { Reward } from "./gateway_reward.js";
-import { Struk } from "./gateway_struk.js";
+import { Receipt } from "./gateway_receipt.js";
 import { User } from "./gateway_user.js";
 import { UserPoint } from "./gateway_user_point.js";
 import { UserReward } from "./gateway_user_reward.js";
@@ -21,11 +21,10 @@ export const gateways = (ds: DataSource): Gateways => {
     } as FindOptionsRelations<UserReward>,
   };
 
-  const strukOptions = {
+  const receiptOptions = {
     relations: {
       user: true,
-      // approvalBy: true,
-    } as FindOptionsRelations<Struk>,
+    } as FindOptionsRelations<Receipt>,
   };
 
   return {
@@ -34,9 +33,9 @@ export const gateways = (ds: DataSource): Gateways => {
     findOneReward: { requestType: "query", gateway: findOneEntity(ds, Reward) },
     saveReward: { requestType: "command", gateway: saveEntity(ds, Reward) },
 
-    findManyStruk: { requestType: "query", gateway: findManyEntity(ds, Struk, strukOptions) },
-    findOneStruk: { requestType: "query", gateway: findOneEntity(ds, Struk, strukOptions) },
-    saveStruk: { requestType: "command", gateway: saveEntity(ds, Struk) },
+    findManyReceipt: { requestType: "query", gateway: findManyEntity(ds, Receipt, receiptOptions) },
+    findOneReceipt: { requestType: "query", gateway: findOneEntity(ds, Receipt, receiptOptions) },
+    saveReceipt: { requestType: "command", gateway: saveEntity(ds, Receipt) },
 
     findManyUserReward: { requestType: "query", gateway: findManyEntity(ds, UserReward, userRewardOptions) },
     findOneUserReward: { requestType: "query", gateway: findOneEntity(ds, UserReward, userRewardOptions) },

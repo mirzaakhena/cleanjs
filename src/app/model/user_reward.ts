@@ -14,11 +14,6 @@ export class UserReward extends Approval<UserRewardID> {
   createdDate: Date;
 }
 
-// =============================================================================================================================
-
 export type FindManyUserRewardFilter = BaseFindManyFilter & {
-  //
   userID: UserID;
 };
-
-// =============================================================================================================================

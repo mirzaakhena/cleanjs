@@ -115,8 +115,6 @@ export const ImplFindAllRecording = (ds: DataSource): FindAllRecording => {
     if (filter.requestType) where.requestType = filter.requestType;
     if (filter.funcNameLike) where.funcName = ILike(`%${filter.funcNameLike}%`);
     if (filter.descriptionLike) where.description = ILike(`%${filter.descriptionLike}%`);
-    // if (filter.dateStart) where.dateStart = filter.dateStart;
-    // if (filter.dateEnd) where.dateEnd = filter.dateEnd;
 
     const size = filter.size || 20;
     const page = (filter.page && filter.page < 1 ? 1 : filter.page) || 1;

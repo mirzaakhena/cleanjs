@@ -7,6 +7,8 @@ export type Gender = "MALE" | "FEMALE";
 export type UserStatus = "ACTIVE" | "NON_ACTIVE";
 
 export class User extends BaseEntity<UserID> {
+  //
+
   name?: string;
   createdDate?: Date;
   totalPoints?: number;
@@ -32,10 +34,6 @@ export class User extends BaseEntity<UserID> {
   }
 }
 
-// =============================================================================================================================
-
 export type FindManyUserFilter = BaseFindManyFilter & {
   //
 };
-
-// =============================================================================================================================

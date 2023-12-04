@@ -4,7 +4,7 @@ import express from "express";
 
 import { DataSource } from "typeorm";
 import { controllerCollection } from "./app/controller/_controller.js";
-import { collectSimpleController, middlewareContext, printController } from "./framework/controller_express.js";
+import { constructDeclarativeController, middlewareContextWithTraceId, printController } from "./framework/controller_express.js";
 import { Middleware, bootstrap, createController } from "./framework/core.js";
 import { transactionMiddleware } from "./framework/gateway_typeorm.js";
 import { recordingInit, recordingMiddleware, setDescriptionRecording } from "./plugin/recording/recording.js";
@@ -13,16 +13,17 @@ import swaggerUi from "swagger-ui-express";
 import { handleAuthorization, handleError } from "./app/controller/_middleware.js";
 import { undeterministicFunctions } from "./app/controller/_undeterministic.js";
 import { gateways } from "./app/gateway/_gateway.js";
-import { usecases } from "./app/usecases/_usecase.js";
-import { controllerToOpenAPI } from "./plugin/swagger/middleware_swagger-ui.js";
-import { groupingControllerWithTag } from "./plugin/ui/group_controller.js";
+import { usecaseCollections } from "./app/usecases/_usecase.js";
+// import { groupingControllerWithTag } from "./plugin/controller_ui/group_controller.js";
+import { controllerToOpenAPI } from "./plugin/swagger/controller_to_openapi.js";
+import { groupingControllerWithTag } from "./plugin/controller_ui/group_controller.js";
 
 export const main = async () => {
   //
 
   dotenv.config();
 
-  const isDevMode = process.env.APP_MODE === "development";
+  const isDevMode = true;
 
   try {
     //
@@ -44,8 +45,6 @@ export const main = async () => {
       ],
       migrations: ["src/migrations/*.ts"],
     });
-
-    const mainRouter = express.Router();
 
     const frameworkMiddleware = [];
     {
@@ -70,16 +69,18 @@ export const main = async () => {
       });
     };
 
+    const mainRouter = express.Router();
+
     const controllers = [
       //
-      ...collectSimpleController(mainRouter, controllerCollection, undeterministicFunctions),
+      ...controllerCollection.map((x) => constructDeclarativeController(mainRouter, x, undeterministicFunctions)),
       helloController(helloRouter),
     ];
 
     const usecaseWithGatewayInstance = bootstrap(
       //
       gateways(ds),
-      usecases,
+      usecaseCollections,
       controllers,
       frameworkMiddleware
     );
@@ -92,15 +93,20 @@ export const main = async () => {
     app.use(cors({ exposedHeaders: ["TraceId", "Date"] }));
 
     if (isDevMode) {
+      // RECORDING
       app.use("/recording", recordingInit(recordingRouter, ds, usecaseWithGatewayInstance));
+
+      // CONTROLLER_UI
+      app.use("/controllers", (req, res) => res.json(groupingControllerWithTag(controllerCollection)));
+
+      // OPEN_API
       const openApiObj = controllerToOpenAPI(controllerCollection);
-      isDevMode && app.use("/controllers", (req, res) => res.json(groupingControllerWithTag(controllerCollection)));
-      isDevMode && app.use("/openapi", (req, res) => res.json(openApiObj));
-      isDevMode && app.use("/swagger", swaggerUi.serve, swaggerUi.setup(openApiObj));
-      // isDevMode && app.use("/redocly", redocly());
+      app.use("/openapi", (req, res) => res.json(openApiObj));
+      app.use("/swagger", swaggerUi.serve, swaggerUi.setup(openApiObj));
+      // app.use("/redocly", redocly());
     }
 
-    app.use(middlewareContext());
+    app.use(middlewareContextWithTraceId());
     app.use(handleAuthorization());
     app.use(mainRouter);
 
@@ -111,7 +117,6 @@ export const main = async () => {
     console.log("controller url :", "http://localhost:3000/controllers");
     console.log("swagger url    :", "http://localhost:3000/swagger");
     console.log("openapi url    :", "http://localhost:3000/openapi");
-    // console.log("redocly url ", "http://localhost:3000/redocly");
 
     await ds.initialize();
 
@@ -127,14 +132,7 @@ export const main = async () => {
   //
 };
 
-const experimental = () => {
-  //
-  //
-  //
-};
-
 main();
-// experimental();
 
 // recording_ui
 // {
