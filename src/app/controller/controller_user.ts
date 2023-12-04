@@ -10,6 +10,10 @@ export const controllerUser: HTTPData[] = [
     query: {
       page: { type: "number", default: 1, description: "Page number for pagination" },
       size: { type: "number", default: 20, description: "Number of items per page" },
+      nameLike: { type: "string" },
+      totalPointMin: { type: "number" },
+      totalPointMax: { type: "number" },
+      status: { type: "enum", enum: ["ACTIVE", "NON_ACTIVE"] },
     },
     response: {
       200: {

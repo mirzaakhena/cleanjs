@@ -36,4 +36,9 @@ export class User extends BaseEntity<UserID> {
 
 export type FindManyUserFilter = BaseFindManyFilter & {
   //
+  nameLike?: string;
+  totalPointMin?: number;
+  totalPointMax?: number;
+  status?: UserStatus;
+  ids?: string[];
 };
