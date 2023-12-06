@@ -17,6 +17,7 @@ import { usecaseCollections } from "./app/usecases/_usecase.js";
 // import { groupingControllerWithTag } from "./plugin/controller_ui/group_controller.js";
 import { controllerToOpenAPI } from "./plugin/swagger/controller_to_openapi.js";
 import { groupingControllerWithTag } from "./plugin/controller_ui/group_controller.js";
+import { constructGraph } from "./plugin/graph/graph.js";
 
 export const main = async () => {
   //
@@ -85,7 +86,7 @@ export const main = async () => {
       frameworkMiddleware
     );
 
-    const recordingRouter = express.Router();
+    const utilityRouter = express.Router();
 
     const app = express();
     app.use(express.json());
@@ -94,7 +95,10 @@ export const main = async () => {
 
     if (isDevMode) {
       // RECORDING
-      app.use("/recording", recordingInit(recordingRouter, ds, usecaseWithGatewayInstance));
+      app.use("/recording", recordingInit(utilityRouter, ds, usecaseWithGatewayInstance));
+
+      // GRAPH
+      app.use("/graph", constructGraph(utilityRouter, usecaseWithGatewayInstance));
 
       // CONTROLLER_UI
       app.use("/controllers", (req, res) => res.json(groupingControllerWithTag(controllerCollection)));
@@ -114,6 +118,7 @@ export const main = async () => {
 
     printController(controllerCollection);
 
+    console.log("graph url      :", "http://localhost:3000/graph");
     console.log("controller url :", "http://localhost:3000/controllers");
     console.log("swagger url    :", "http://localhost:3000/swagger");
     console.log("openapi url    :", "http://localhost:3000/openapi");

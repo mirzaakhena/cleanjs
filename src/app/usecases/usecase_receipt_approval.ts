@@ -3,7 +3,7 @@ import { FindOneEntity, SaveEntity } from "../../framework/repo.js";
 import { ApprovalActionStatus, ApprovalStatus } from "../model/approval.js";
 import { Receipt, ReceiptID } from "../model/receipt.js";
 
-import { User, UserID } from "../model/user.js";
+import { User } from "../model/user.js";
 import { UserPoint, UserPointID } from "../model/user_point.js";
 
 type Outport = {

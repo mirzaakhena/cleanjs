@@ -4,9 +4,11 @@ export type Context<T = any> = {
   date: Date;
 };
 
-export type Inport<REQUEST = any, RESPONSE = any> = (ctx: Context, request: REQUEST) => Promise<RESPONSE>;
+export type BasicFunction<REQUEST = any, RESPONSE = any> = (ctx: Context, request: REQUEST) => Promise<RESPONSE>;
 
-export type Outport<T extends Record<string, Inport> = Record<string, Inport>> = T;
+export type Inport<REQUEST = any, RESPONSE = any> = BasicFunction<REQUEST, RESPONSE>;
+
+export type Outport<T extends Record<string, BasicFunction> = Record<string, BasicFunction>> = T;
 
 export type InputResponseWithCount<T> = { items: T[]; count: number };
 
@@ -27,14 +29,14 @@ export type RequestType = "command" | "query";
 export type Gateways = Record<
   string,
   {
-    gateway: Inport | null;
+    gateway: BasicFunction | null;
     requestType: RequestType;
   }
 >;
 
 export type Usecases = Record<string, Usecase>;
 
-export type Middleware = (funcType: FunctionType, requestType: RequestType, name: string, x: Inport) => Inport;
+export type Middleware = (funcType: FunctionType, requestType: RequestType, name: string, x: BasicFunction) => BasicFunction;
 
 export type UsecaseWithGatewayInstance = Record<
   string,
@@ -45,7 +47,7 @@ export type UsecaseWithGatewayInstance = Record<
   }
 >;
 
-export function propertyExistsAndHasValue<T extends object>(obj: T, prop: keyof T): obj is T & { [K in keyof T]: NonNullable<T[K]> } {
+function propertyExistsAndHasValue<T extends object>(obj: T, prop: keyof T): obj is T & { [K in keyof T]: NonNullable<T[K]> } {
   return prop in obj && obj[prop] !== null && obj[prop] !== undefined;
 }
 
@@ -60,6 +62,7 @@ export const bootstrap = (gateways: Gateways, usecases: Usecases, controllers: C
 
     let o: Outport = {};
     let requestType: RequestType = "query";
+    let modifiedFunctionsCounter = 0;
 
     // kita akan iterasi semua gateway yang diperlukan oleh usecase
     for (const gatewayName of usecases[usecaseName].gatewayNames) {
@@ -72,16 +75,20 @@ export const bootstrap = (gateways: Gateways, usecases: Usecases, controllers: C
       }
 
       // jalankan decorator pattern
-      let current: Inport = gateways[gatewayNameAsString].gateway!;
+      let current: BasicFunction = gateways[gatewayNameAsString].gateway!;
       for (const middleware of middlewares) {
         current = middleware("gateway", gateways[gatewayNameAsString].requestType, gatewayNameAsString, current);
       }
 
       o = { ...o, [gatewayNameAsString]: current };
 
-      // jika some of gateway tersebut adalah command, maka usecase tersebut juga command
+      // auto transaction detection
+      // if gateway if command and found more than one, then the usecase is a command
       if (gateways[gatewayNameAsString].requestType === "command" && requestType !== "command") {
-        requestType = "command";
+        modifiedFunctionsCounter += 1;
+        if (modifiedFunctionsCounter > 1) {
+          requestType = "command";
+        }
       }
     }
 

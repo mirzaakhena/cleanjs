@@ -29,12 +29,7 @@ export const gateways = (ds: DataSource): Gateways => {
 
   return {
     //
-    findManyReward: {
-      requestType: "query",
-      gateway: findManyEntity(ds, Reward, {
-        where: {},
-      }),
-    },
+    findManyReward: { requestType: "query", gateway: findManyEntity(ds, Reward) },
     findOneReward: { requestType: "query", gateway: findOneEntity(ds, Reward) },
     saveReward: { requestType: "command", gateway: saveEntity(ds, Reward) },
 
