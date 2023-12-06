@@ -1,7 +1,7 @@
 import express from "express";
 import { Context, Inport, createController } from "./core.js";
 import { HTTPData } from "./data_http.js";
-import { camelToPascalWithSpace, generateID } from "./helper.js";
+import { camelToPascalWithSpace, extractArrayString, extractBoolean, extractNumber, generateID } from "./helper.js";
 
 export type RequestWithContext = express.Request & {
   ctx?: Context;
@@ -21,29 +21,6 @@ export const middlewareContextWithTraceId = () => {
 
 export const getRequestWithContext = (req: express.Request): Context => {
   return (req as RequestWithContext).ctx as Context;
-};
-
-// TODO move it to utility
-export const extractArrayString = (values: any) => (Array.isArray(values) ? [...values] : values ? [values] : []);
-
-// TODO move it to utility
-export const extractNumber = (value: any, defaultValue?: any): number | undefined => {
-  if (typeof value === "number" && !isNaN(value)) {
-    return value;
-  } else if (typeof value === "string") {
-    const numericValue = +value;
-    if (!isNaN(numericValue)) {
-      return numericValue;
-    }
-  } else if (defaultValue) {
-    return defaultValue;
-  }
-  return undefined;
-};
-
-// TODO move it to utility
-export const extractBoolean = (value: any): boolean | undefined => {
-  return value === "true" ? true : value === "false" ? false : undefined;
 };
 
 export const constructDeclarativeController = <T = any>(
@@ -120,10 +97,6 @@ export const constructDeclarativeController = <T = any>(
     //
   });
 };
-
-// export const collectSimpleController_ = (router: express.Router, httpDatas: HTTPData[], localFunctions: Record<string, Inport>) => {
-//   return httpDatas.map((x) => constructDeclarativeController(router, x, localFunctions));
-// };
 
 const checkDataType = (type: string, defaultValue: any, value: any): any => {
   //

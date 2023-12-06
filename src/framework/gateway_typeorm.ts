@@ -13,6 +13,9 @@ export const transactionMiddleware: (ds: DataSource) => Middleware = (ds: DataSo
     return async (ctx, input) => {
       //
 
+      // console.log(funcType, ">>>", ctx.data[TRANSACTION_FIELD]);
+
+      // if (!(funcType === "controller" && ctx.data[TRANSACTION_FIELD])) {
       if (requestType === "query" || funcType === "gateway" || (ctx.data[TRANSACTION_FIELD] ?? null)) {
         return await inport(ctx, input);
       }

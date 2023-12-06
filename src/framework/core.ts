@@ -85,10 +85,10 @@ export const bootstrap = (gateways: Gateways, usecases: Usecases, controllers: C
       // auto transaction detection
       // if gateway if command and found more than one, then the usecase is a command
       if (gateways[gatewayNameAsString].requestType === "command" && requestType !== "command") {
-        modifiedFunctionsCounter += 1;
-        if (modifiedFunctionsCounter > 1) {
-          requestType = "command";
-        }
+        // modifiedFunctionsCounter += 1;
+        // if (modifiedFunctionsCounter > 1) {
+        // }
+        requestType = "command";
       }
     }
 
@@ -100,6 +100,8 @@ export const bootstrap = (gateways: Gateways, usecases: Usecases, controllers: C
         usecase: usecases[usecaseName],
       },
     };
+
+    console.log(usecaseName, "=>", requestType);
 
     //
   }

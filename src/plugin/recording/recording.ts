@@ -259,8 +259,10 @@ export const recordingMiddleware: () => Middleware = () => {
   };
 };
 
-export const recordingInit = (router: express.Router, ds: DataSource, usecaseWithGatewayInstance: UsecaseWithGatewayInstance) => {
+export const recordingInit = (ds: DataSource, usecaseWithGatewayInstance: UsecaseWithGatewayInstance) => {
   //
+
+  const router = express.Router();
 
   const implSaveRecording = ImplSaveRecordingToDB(ds);
 

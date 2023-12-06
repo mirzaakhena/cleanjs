@@ -14,7 +14,6 @@ import { handleAuthorization, handleError } from "./app/controller/_middleware.j
 import { undeterministicFunctions } from "./app/controller/_undeterministic.js";
 import { gateways } from "./app/gateway/_gateway.js";
 import { usecaseCollections } from "./app/usecases/_usecase.js";
-// import { groupingControllerWithTag } from "./plugin/controller_ui/group_controller.js";
 import { controllerToOpenAPI } from "./plugin/swagger/controller_to_openapi.js";
 import { groupingControllerWithTag } from "./plugin/controller_ui/group_controller.js";
 import { constructGraph } from "./plugin/graph/graph.js";
@@ -49,15 +48,19 @@ export const main = async () => {
 
     const frameworkMiddleware = [];
     {
-      isDevMode && frameworkMiddleware.push(recordingMiddleware());
-      // sample how to create middleware
-      const middlewareSample: Middleware = (funcType, requestType, name, inport) => {
-        return async (ctx, input) => {
-          setDescriptionRecording(ctx, "omar");
-          return await inport(ctx, input);
+      if (isDevMode) {
+        frameworkMiddleware.push(recordingMiddleware());
+
+        // sample how to create middleware
+        const middlewareSample: Middleware = (funcType, requestType, name, inport) => {
+          return async (ctx, input) => {
+            setDescriptionRecording(ctx, "omar");
+            return await inport(ctx, input);
+          };
         };
-      };
-      isDevMode && frameworkMiddleware.push(middlewareSample);
+        frameworkMiddleware.push(middlewareSample);
+      }
+
       frameworkMiddleware.push(transactionMiddleware(ds));
     }
 
@@ -74,7 +77,7 @@ export const main = async () => {
 
     const controllers = [
       //
-      ...controllerCollection.map((x) => constructDeclarativeController(mainRouter, x, undeterministicFunctions)),
+      ...controllerCollection.map((httpData) => constructDeclarativeController(mainRouter, httpData, undeterministicFunctions)),
       helloController(helloRouter),
     ];
 
@@ -86,8 +89,6 @@ export const main = async () => {
       frameworkMiddleware
     );
 
-    const utilityRouter = express.Router();
-
     const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -95,17 +96,19 @@ export const main = async () => {
 
     if (isDevMode) {
       // RECORDING
-      app.use("/recording", recordingInit(utilityRouter, ds, usecaseWithGatewayInstance));
+      app.use("/recording", recordingInit(ds, usecaseWithGatewayInstance));
 
       // GRAPH
-      app.use("/graph", constructGraph(utilityRouter, usecaseWithGatewayInstance));
+      app.use("/graph", constructGraph(usecaseWithGatewayInstance));
 
       // CONTROLLER_UI
-      app.use("/controllers", (req, res) => res.json(groupingControllerWithTag(controllerCollection)));
+      app.use("/controllers", groupingControllerWithTag(controllerCollection));
 
       // OPEN_API
       const openApiObj = controllerToOpenAPI(controllerCollection);
       app.use("/openapi", (req, res) => res.json(openApiObj));
+
+      // SWAGGER_UI
       app.use("/swagger", swaggerUi.serve, swaggerUi.setup(openApiObj));
       // app.use("/redocly", redocly());
     }

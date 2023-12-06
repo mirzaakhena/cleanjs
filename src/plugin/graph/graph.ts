@@ -1,8 +1,10 @@
 import express from "express";
 import { UsecaseWithGatewayInstance } from "../../framework/core.js";
 
-export const constructGraph = (router: express.Router, ug: UsecaseWithGatewayInstance) => {
+export const constructGraph = (ug: UsecaseWithGatewayInstance) => {
   //
+
+  const router = express.Router();
 
   const usecases: string[] = [];
 
