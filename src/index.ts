@@ -60,8 +60,6 @@ export const main = async () => {
         };
         frameworkMiddleware.push(middlewareSample);
       }
-
-      frameworkMiddleware.push(transactionMiddleware(ds));
     }
 
     const helloRouter = express.Router();
@@ -86,6 +84,7 @@ export const main = async () => {
       gateways(ds),
       usecaseCollections,
       controllers,
+      transactionMiddleware(ds),
       frameworkMiddleware
     );
 

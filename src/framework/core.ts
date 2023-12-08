@@ -30,17 +30,20 @@ export type Gateways = Record<
   string,
   {
     gateway: BasicFunction | null;
-    requestType: RequestType;
+    isInsertOrModify: boolean;
   }
 >;
 
 export type Usecases = Record<string, Usecase>;
 
-export type Middleware = (funcType: FunctionType, requestType: RequestType, name: string, x: BasicFunction) => BasicFunction;
+export type Middleware = (funcType: FunctionType, requestType: RequestType, name: string, func: BasicFunction) => BasicFunction;
+
+export type MiddlewareTransaction = (isUseTransaction: boolean, name: string, func: Inport) => Inport;
 
 export type UsecaseWithGatewayInstance = Record<
   string,
   {
+    isUseTransaction: boolean;
     requestType: RequestType;
     inport: Inport;
     usecase: Usecase;
@@ -51,7 +54,13 @@ function propertyExistsAndHasValue<T extends object>(obj: T, prop: keyof T): obj
   return prop in obj && obj[prop] !== null && obj[prop] !== undefined;
 }
 
-export const bootstrap = (gateways: Gateways, usecases: Usecases, controllers: Controller[], middlewares: Middleware[]): UsecaseWithGatewayInstance => {
+export const bootstrap = (
+  gateways: Gateways,
+  usecases: Usecases,
+  controllers: Controller[],
+  middlewareTransaction: MiddlewareTransaction,
+  middlewares: Middleware[]
+): UsecaseWithGatewayInstance => {
   //
 
   let usecasesWithGatewayInstance: UsecaseWithGatewayInstance = {};
@@ -61,7 +70,7 @@ export const bootstrap = (gateways: Gateways, usecases: Usecases, controllers: C
     //
 
     let o: Outport = {};
-    let requestType: RequestType = "query";
+    // let requestType: RequestType = "query";
     let modifiedFunctionsCounter = 0;
 
     // kita akan iterasi semua gateway yang diperlukan oleh usecase
@@ -77,18 +86,15 @@ export const bootstrap = (gateways: Gateways, usecases: Usecases, controllers: C
       // jalankan decorator pattern
       let current: BasicFunction = gateways[gatewayNameAsString].gateway!;
       for (const middleware of middlewares) {
-        current = middleware("gateway", gateways[gatewayNameAsString].requestType, gatewayNameAsString, current);
+        current = middleware("gateway", gateways[gatewayNameAsString].isInsertOrModify ? "command" : "query", gatewayNameAsString, current);
       }
 
       o = { ...o, [gatewayNameAsString]: current };
 
       // auto transaction detection
       // if gateway if command and found more than one, then the usecase is a command
-      if (gateways[gatewayNameAsString].requestType === "command" && requestType !== "command") {
-        // modifiedFunctionsCounter += 1;
-        // if (modifiedFunctionsCounter > 1) {
-        // }
-        requestType = "command";
+      if (gateways[gatewayNameAsString].isInsertOrModify) {
+        modifiedFunctionsCounter += 1;
       }
     }
 
@@ -96,12 +102,13 @@ export const bootstrap = (gateways: Gateways, usecases: Usecases, controllers: C
       ...usecasesWithGatewayInstance,
       [usecaseName]: {
         inport: usecases[usecaseName].execute(o),
-        requestType,
+        isUseTransaction: modifiedFunctionsCounter > 1,
         usecase: usecases[usecaseName],
+        requestType: modifiedFunctionsCounter > 0 ? "command" : "query",
       },
     };
 
-    console.log(usecaseName, "=>", requestType);
+    console.log(usecaseName, "=>", modifiedFunctionsCounter > 1 ? "transaction" : "no");
 
     //
   }
@@ -120,6 +127,11 @@ export const bootstrap = (gateways: Gateways, usecases: Usecases, controllers: C
 
       // jalankan decorator pattern
       let current: Inport = usecasesWithGatewayInstance[usecaseName].inport;
+
+      // add middleware for transaction
+      current = middlewareTransaction(usecasesWithGatewayInstance[usecaseName].isUseTransaction, usecaseName, current);
+
+      // add other middleware
       for (const middleware of middlewares) {
         current = middleware("controller", usecasesWithGatewayInstance[usecaseName].requestType, usecaseName, current);
       }

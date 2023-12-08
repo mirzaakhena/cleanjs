@@ -1,22 +1,19 @@
 import { DataSource, EntityTarget, FindOptionsOrder, FindOptionsRelations, FindOptionsWhere } from "typeorm";
-import { Context, Middleware } from "./core.js";
+import { Context, Middleware, MiddlewareTransaction } from "./core.js";
 import { BaseEntity, BaseFindManyFilter, DeleteEntity, FindManyEntity, FindOneEntity, Identifier, SaveEntity } from "./repo.js";
 
 const TRANSACTION_FIELD = "transaction";
 
-export const transactionMiddleware: (ds: DataSource) => Middleware = (ds: DataSource) => {
+export const transactionMiddleware: (ds: DataSource) => MiddlewareTransaction = (ds: DataSource) => {
   //
 
-  return (funcType, requestType, name, inport) => {
+  return (isUseTransaction, name, inport) => {
     //
 
     return async (ctx, input) => {
       //
 
-      // console.log(funcType, ">>>", ctx.data[TRANSACTION_FIELD]);
-
-      // if (!(funcType === "controller" && ctx.data[TRANSACTION_FIELD])) {
-      if (requestType === "query" || funcType === "gateway" || (ctx.data[TRANSACTION_FIELD] ?? null)) {
+      if (!isUseTransaction) {
         return await inport(ctx, input);
       }
 

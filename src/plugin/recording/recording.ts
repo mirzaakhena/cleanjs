@@ -31,10 +31,10 @@ export type ReplayableUsecase = {
   inport: Inport;
 };
 
-export interface DataRecording extends RecordFunction {
+export type DataRecording = RecordFunction & {
   date: Date;
   id: string;
-}
+};
 
 export type SaveRecording = (ctx: Context, obj: DataRecording) => Promise<void>;
 
@@ -59,11 +59,18 @@ export type FindAllRecordingFilter = {
 
 export type FindAllRecording = (ctx: Context, filter: FindAllRecordingFilter) => Promise<[DataRecording[], number]>;
 
-export interface DataRecordingPlaylist {
+export type DataRecordingPlaylistItem = {
   id: string;
+  funcName: string;
   description: string;
-  recordIds: string[];
-}
+  requestType: RequestType;
+};
+
+export type DataRecordingPlaylist = {
+  id: string;
+  name: string;
+  records: DataRecordingPlaylistItem[];
+};
 
 export type SaveRecordingPlaylist = (ctx: Context, obj: DataRecordingPlaylist) => Promise<void>;
 
@@ -73,7 +80,7 @@ export type FindAllRecordingPlaylistFilter = {
   id?: string;
   page?: number;
   size?: number;
-  descriptionLike?: string;
+  nameLike?: string;
 };
 
 export type FindAllRecordingPlaylist = (ctx: Context, filter: FindAllRecordingPlaylistFilter) => Promise<[DataRecordingPlaylist[], number]>;
@@ -271,10 +278,8 @@ export const recordingInit = (ds: DataSource, usecaseWithGatewayInstance: Usecas
   const replayableUsecases: ReplayableUsecase[] = [];
 
   for (const name in usecaseWithGatewayInstance) {
-    const { requestType, inport } = usecaseWithGatewayInstance[name];
-    if (requestType === "command") {
-      replayableUsecases.push({ inport, name });
-    }
+    const { inport } = usecaseWithGatewayInstance[name];
+    replayableUsecases.push({ inport, name });
   }
 
   handleRecording(router, {

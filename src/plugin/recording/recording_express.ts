@@ -3,6 +3,7 @@ import { Outport, RequestType, UsecaseWithGatewayInstance } from "../../framewor
 import { extractArrayString, extractBoolean, extractNumber, generateID } from "../../framework/helper.js";
 import {
   DataRecordingPlaylist,
+  DataRecordingPlaylistItem,
   DeleteAllRecording,
   DeleteSomeRecording,
   DeleteSomeRecordingPlaylist,
@@ -314,11 +315,11 @@ export const handleRecording = (
     //
     try {
       const ctx = getContext("");
-      const description = req.body.description;
+      const name = req.body.name;
       const recordIds = req.body.recordIds as string[];
 
-      if (description === "") {
-        throw new Error(`description must not empty`);
+      if (name === "") {
+        throw new Error(`name must not empty`);
       }
 
       const [result] = await repos.findAllRecording(ctx, {
@@ -332,17 +333,21 @@ export const handleRecording = (
         }
       }
 
-      const playlistId = generateID();
+      const id = generateID();
       await repos.saveRecordingPlaylist(ctx, {
-        description,
-        id: playlistId,
-        recordIds,
+        id,
+        name,
+        records: result.map((r) => {
+          return {
+            description: r.description,
+            funcName: r.funcName,
+            id: r.id,
+            requestType: r.requestType,
+          } as DataRecordingPlaylistItem;
+        }),
       });
 
-      res.json({
-        message: `playlist id ${playlistId} has been created`,
-        playlistId,
-      });
+      res.json({ message: `playlist with id ${id} has been created`, id });
     } catch (err) {
       res.status(400).json({ message: (err as Error).message });
     }
@@ -355,7 +360,7 @@ export const handleRecording = (
     const [items, count] = await repos.findAllRecordingPlaylist(ctx, {
       page: extractNumber(req.query.page),
       size: extractNumber(req.query.size),
-      descriptionLike: req.query.descriptionLike as string,
+      nameLike: req.query.nameLike as string,
     });
 
     res.json({ items, count });
@@ -382,7 +387,7 @@ export const handleRecording = (
       const ctx = getContext("");
 
       const playlistId = req.params.playlistId;
-      const description = req.body.description;
+      const name = req.body.name;
       const recordIds = req.body.recordIds as string[];
 
       let [newPlaylists, count] = await repos.findAllRecordingPlaylist(ctx, {
@@ -393,8 +398,8 @@ export const handleRecording = (
         throw new Error(`recording playlist with id  ${playlistId} is not found`);
       }
 
-      if (description === "") {
-        throw new Error(`description must not empty`);
+      if (name === "") {
+        throw new Error(`name must not empty`);
       }
 
       const [result] = await repos.findAllRecording(ctx, {
@@ -409,8 +414,15 @@ export const handleRecording = (
 
       const newPlaylist: DataRecordingPlaylist = {
         ...newPlaylists[0],
-        description,
-        recordIds,
+        name,
+        records: result.map((r) => {
+          return {
+            description: r.description,
+            funcName: r.funcName,
+            id: r.id,
+            requestType: r.requestType,
+          } as DataRecordingPlaylistItem;
+        }),
       };
 
       await repos.saveRecordingPlaylist(ctx, newPlaylist);
@@ -448,15 +460,15 @@ export const handleRecording = (
       }
 
       //
-      for (const recordingId of playlists[0].recordIds) {
+      for (const record of playlists[0].records.reverse()) {
         //
         const [recordings, count] = await repos.findAllRecording(ctx, {
-          ids: [recordingId],
+          ids: [record.id],
           complete: true,
         });
 
         if (count === 0) {
-          throw new Error(`recording with id ${recordingId} is not found`);
+          throw new Error(`recording with id ${record} is not found`);
         }
 
         const recording = recordings[0];

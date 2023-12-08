@@ -29,23 +29,23 @@ export const gateways = (ds: DataSource): Gateways => {
 
   return {
     //
-    findManyReward: { requestType: "query", gateway: findManyEntity(ds, Reward) },
-    findOneReward: { requestType: "query", gateway: findOneEntity(ds, Reward) },
-    saveReward: { requestType: "command", gateway: saveEntity(ds, Reward) },
+    findManyReward: { isInsertOrModify: false, gateway: findManyEntity(ds, Reward) },
+    findOneReward: { isInsertOrModify: false, gateway: findOneEntity(ds, Reward) },
+    saveReward: { isInsertOrModify: true, gateway: saveEntity(ds, Reward) },
 
-    findManyReceipt: { requestType: "query", gateway: findManyEntity(ds, Receipt, receiptOptions) },
-    findOneReceipt: { requestType: "query", gateway: findOneEntity(ds, Receipt, receiptOptions) },
-    saveReceipt: { requestType: "command", gateway: saveEntity(ds, Receipt) },
+    findManyReceipt: { isInsertOrModify: false, gateway: findManyEntity(ds, Receipt, receiptOptions) },
+    findOneReceipt: { isInsertOrModify: false, gateway: findOneEntity(ds, Receipt, receiptOptions) },
+    saveReceipt: { isInsertOrModify: true, gateway: saveEntity(ds, Receipt) },
 
-    findManyUserReward: { requestType: "query", gateway: findManyEntity(ds, UserReward, userRewardOptions) },
-    findOneUserReward: { requestType: "query", gateway: findOneEntity(ds, UserReward, userRewardOptions) },
-    saveUserReward: { requestType: "command", gateway: saveEntity(ds, UserReward) },
+    findManyUserReward: { isInsertOrModify: false, gateway: findManyEntity(ds, UserReward, userRewardOptions) },
+    findOneUserReward: { isInsertOrModify: false, gateway: findOneEntity(ds, UserReward, userRewardOptions) },
+    saveUserReward: { isInsertOrModify: true, gateway: saveEntity(ds, UserReward) },
 
-    findManyUser: { requestType: "query", gateway: findManyEntity(ds, User) },
-    findOneUser: { requestType: "query", gateway: findOneEntity(ds, User) },
-    saveUser: { requestType: "command", gateway: saveEntity(ds, User) },
+    findManyUser: { isInsertOrModify: false, gateway: findManyEntity(ds, User) },
+    findOneUser: { isInsertOrModify: false, gateway: findOneEntity(ds, User) },
+    saveUser: { isInsertOrModify: true, gateway: saveEntity(ds, User) },
 
-    saveUserPoint: { requestType: "command", gateway: saveEntity(ds, UserPoint) },
-    findManyUserPoint: { requestType: "query", gateway: findManyEntity(ds, UserPoint) },
+    saveUserPoint: { isInsertOrModify: true, gateway: saveEntity(ds, UserPoint) },
+    findManyUserPoint: { isInsertOrModify: false, gateway: findManyEntity(ds, UserPoint) },
   };
 };

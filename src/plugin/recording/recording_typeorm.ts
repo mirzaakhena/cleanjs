@@ -1,6 +1,7 @@
 import { Column, DataSource, Entity, EntityManager, FindOptionsSelect, FindOptionsWhere, ILike, In, PrimaryColumn } from "typeorm";
 import { RequestType, Context } from "../../framework/core.js";
 import {
+  DataRecordingPlaylistItem,
   DeleteAllRecording,
   DeleteSomeRecording,
   DeleteSomeRecordingPlaylist,
@@ -20,19 +21,19 @@ import { RecordFunction } from "./recording.js";
 export class DataRecording implements IDataRecording {
   //
   @PrimaryColumn({ type: "text" })
-  id: string = "";
+  declare id: string;
 
   @Column({ type: "timestamp" })
-  date: Date = new Date();
+  declare date: Date;
 
   @Column({ type: "text" })
-  funcName: string = "";
+  declare funcName: string;
 
   @Column({ type: "text", nullable: true })
-  description: string = "";
+  declare description: string;
 
   @Column({ type: "text" })
-  requestType: RequestType = "command";
+  declare requestType: RequestType;
 
   @Column({ type: "jsonb", nullable: true })
   input?: any;
@@ -55,13 +56,13 @@ export class DataRecording implements IDataRecording {
 @Entity()
 export class DataRecordingPlaylist implements IDataRecordingPlaylist {
   @PrimaryColumn({ type: "text" })
-  id: string = "";
+  declare id: string;
 
   @Column({ type: "text", nullable: true })
-  description: string = "";
+  declare name: string;
 
   @Column({ type: "jsonb" })
-  recordIds: string[] = [];
+  declare records: DataRecordingPlaylistItem[];
 }
 
 export const ImplSaveRecordingToDB = (ds: DataSource): SaveRecording => {
@@ -198,7 +199,7 @@ export const ImplFindAllRecordingPlaylist = (ds: DataSource): FindAllRecordingPl
     let where: FindOptionsWhere<DataRecordingPlaylist> = {};
 
     if (filter.id) where.id = filter.id;
-    if (filter.descriptionLike) where.description = ILike(`%${filter.descriptionLike}%`);
+    if (filter.nameLike) where.name = ILike(`%${filter.nameLike}%`);
 
     const size = filter.size || 20;
     const page = (filter.page && filter.page < 1 ? 1 : filter.page) || 1;
