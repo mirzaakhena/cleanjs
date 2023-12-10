@@ -1,6 +1,6 @@
 import { Usecase } from "../../framework/core.js";
 import { FindOneEntity, SaveEntity } from "../../framework/repo.js";
-import { ApprovalActionStatus, ApprovalStatus } from "../model/approval.js";
+import { ApprovalActionStatusType, ApprovalStatusType } from "../model/approval.js";
 import { Receipt, ReceiptID } from "../model/receipt.js";
 
 import { User } from "../model/user.js";
@@ -17,12 +17,12 @@ export type InportRequest = {
   now: Date;
   newUserPointID: UserPointID;
   receiptID: ReceiptID;
-  status: ApprovalActionStatus;
+  status: ApprovalActionStatusType;
 };
 
 export type InportResponse = {
   id: ReceiptID;
-  status: ApprovalStatus;
+  status: ApprovalStatusType;
 };
 
 export const receiptApproval: Usecase<Outport, InportRequest, InportResponse> = {

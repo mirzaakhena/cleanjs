@@ -18,6 +18,6 @@ export class User extends IUser {
   declare totalPoints: number;
 
   @Column({ type: "varchar", length: 10 })
-  declare status?: UserStatus;
+  declare status: (typeof UserStatus)[number];
   //
 }

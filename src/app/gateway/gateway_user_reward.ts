@@ -1,10 +1,10 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { ApprovalStatus } from "../model/approval.js";
+import { ApprovalStatusType } from "../model/approval.js";
 import { Reward as IReward } from "../model/reward.js";
 import { User as IUser } from "../model/user.js";
+import { UserReward as IUserReward } from "../model/user_reward.js";
 import { Reward } from "./gateway_reward.js";
 import { User } from "./gateway_user.js";
-import { UserReward as IUserReward } from "../model/user_reward.js";
 
 @Entity()
 export class UserReward extends IUserReward {
@@ -13,7 +13,7 @@ export class UserReward extends IUserReward {
   declare id: string;
 
   @Column({ type: "varchar", length: 10 })
-  declare status: ApprovalStatus;
+  declare status: ApprovalStatusType;
 
   @Column({ type: "timestamp", nullable: true })
   declare approvalDate: Date;

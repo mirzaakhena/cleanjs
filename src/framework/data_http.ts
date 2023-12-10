@@ -1,9 +1,9 @@
-import { InputType } from "./data_type.js";
+import { DeepPartial, InputType, ShallowPartial } from "./data_type.js";
 
-export type Tags = {
-  tag: string;
-  httpDatas: HTTPData[];
-};
+// export type Tags = {
+//   tag: string;
+//   httpDatas: HTTPData[];
+// };
 
 export type ResponseCode = 200 | 201 | 400 | 401 | number;
 
@@ -15,25 +15,24 @@ export type HeaderType = {
   location: string;
 };
 
-export type ResponseType = {
+export type ResponseType<RESPONSE> = {
   description?: string;
   summary?: string;
   headers?: HeaderType;
-  content: Record<string, InputType>;
+  content: DeepPartial<RESPONSE>;
 };
 
-export type HTTPData = {
+export type HTTPData<REQUEST = any, RESPONSE = any> = {
   description?: string;
   usecase: string;
   method: Methods;
   path: string;
   tag: string;
-  cookie?: Record<string, InputType>;
-  query?: Record<string, InputType>;
-  param?: Record<string, InputType>;
-  header?: Record<string, InputType>;
-  body?: Record<string, InputType>;
-  local?: Record<string, FuncType>;
-  response?: Record<ResponseCode, ResponseType>;
+  query?: ShallowPartial<REQUEST>;
+  param?: ShallowPartial<REQUEST>;
+  header?: ShallowPartial<REQUEST>;
+  body?: DeepPartial<REQUEST>;
+  local?: ShallowPartial<REQUEST, FuncType>;
+  response?: Record<ResponseCode, ResponseType<RESPONSE>>;
   responseAsTable?: boolean;
 };

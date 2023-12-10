@@ -44,7 +44,7 @@ export const constructDeclarativeController = <T = any>(
         for (const key in httpData.header) {
           payload = {
             ...payload,
-            [key]: checkDataType(httpData.header[key].type, httpData.header[key].default, req.get(key)),
+            [key]: checkDataType(httpData.header[key]!.type, httpData.header[key]!.default, req.get(key)),
           } as T;
         }
 
@@ -58,7 +58,7 @@ export const constructDeclarativeController = <T = any>(
         for (const key in httpData.query) {
           payload = {
             ...payload,
-            [key]: checkDataType(httpData.query[key].type, httpData.query[key].default, req.query[key]),
+            [key]: checkDataType(httpData.query[key]!.type, httpData.query[key]!.default, req.query[key]),
           } as T;
         }
 
@@ -74,6 +74,10 @@ export const constructDeclarativeController = <T = any>(
 
           const localVar = httpData.local[key]; // localFunctions[key];
 
+          if (!localVar) {
+            continue;
+          }
+
           const func = localFunctions[localVar.funcName];
           if (!func) {
             throw new Error(`local function ${localVar.funcName} is not defined`);
@@ -81,7 +85,7 @@ export const constructDeclarativeController = <T = any>(
 
           payload = {
             ...payload,
-            [key]: await func(ctx, httpData.local[key].input), // checkLocalData(ctx, key, httpData.local[key]),
+            [key]: await func(ctx, httpData.local[key]?.input), // checkLocalData(ctx, key, httpData.local[key]),
           } as T;
         }
 

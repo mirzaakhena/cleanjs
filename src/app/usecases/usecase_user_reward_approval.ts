@@ -1,8 +1,8 @@
 import { Usecase } from "../../framework/core.js";
 import { FindOneEntity, SaveEntity } from "../../framework/repo.js";
-import { ApprovalActionStatus, ApprovalStatus } from "../model/approval.js";
+import { ApprovalActionStatusType, ApprovalStatusType } from "../model/approval.js";
 import { Reward, RewardID } from "../model/reward.js";
-import { User, UserID } from "../model/user.js";
+import { User } from "../model/user.js";
 import { UserPoint, UserPointID } from "../model/user_point.js";
 import { UserReward, UserRewardID } from "../model/user_reward.js";
 
@@ -20,12 +20,12 @@ export type InportRequest = {
   userRewardID: UserRewardID;
   newUserPointID: UserPointID;
   now: Date;
-  status: ApprovalActionStatus;
+  status: ApprovalActionStatusType;
 };
 
 export type InportResponse = {
   id: RewardID;
-  status: ApprovalStatus;
+  status: ApprovalStatusType;
 };
 
 export const userRewardApproval: Usecase<Outport, InportRequest, InportResponse> = {

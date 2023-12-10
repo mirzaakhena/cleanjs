@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { ApprovalStatus } from "../model/approval.js";
-import { User as IUser } from "../model/user.js";
+import { ApprovalStatusType } from "../model/approval.js";
 import { Receipt as IReceipt } from "../model/receipt.js";
+import { User as IUser } from "../model/user.js";
 import { User } from "./gateway_user.js";
 
 @Entity()
@@ -12,7 +12,7 @@ export class Receipt extends IReceipt {
   declare id: string;
 
   @Column({ type: "varchar", length: 10 })
-  declare status: ApprovalStatus;
+  declare status: ApprovalStatusType;
 
   @Column({ type: "timestamp", nullable: true })
   declare approvalDate: Date;

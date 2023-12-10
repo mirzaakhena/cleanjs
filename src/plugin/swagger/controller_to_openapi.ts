@@ -1,5 +1,5 @@
 import { HTTPData, ResponseCode, ResponseType } from "../../framework/data_http.js";
-import { InputType } from "../../framework/data_type.js";
+import { DeepPartial, InputType } from "../../framework/data_type.js";
 import { camelToPascalWithSpace } from "../../framework/helper.js";
 import { OpenAPIObject, OperationObject, ParameterObject, PathItemObject, ResponseObject, SchemaObject } from "./openapi_schema.js";
 
@@ -76,13 +76,13 @@ function extractPath(input: HTTPData): ParameterObject[] {
               in: "query",
               // description: `${details.description}` ?? undefined, // Handle undefined description
               // default: details.default,
-              required: details.required || undefined,
+              required: details?.required || undefined,
               // schema: input.query ? handlePropertiesObject(input.query.) : undefined,
               schema: input.query
                 ? {
-                    type: input.query[name].type === "date" ? "string" : input.query[name].type,
-                    default: input.query[name].default ?? undefined,
-                    description: input.query[name].description ?? undefined,
+                    type: input.query[name]?.type === "date" ? "string" : input.query[name]?.type,
+                    default: input.query[name]?.default ?? undefined,
+                    description: input.query[name]?.description ?? undefined,
                   }
                 : undefined,
             } as ParameterObject)
@@ -102,9 +102,9 @@ function extractPath(input: HTTPData): ParameterObject[] {
               in: "path",
               required: true,
               schema: {
-                type: queryType.type === "number" ? "integer" : queryType.type,
-                default: queryType.default,
-                description: queryType.description ?? undefined, // Handle undefined description
+                type: queryType?.type === "number" ? "integer" : queryType?.type,
+                default: queryType?.default,
+                description: queryType?.description ?? undefined, // Handle undefined description
               },
             } as ParameterObject)
         )
@@ -121,11 +121,11 @@ function extractPath(input: HTTPData): ParameterObject[] {
             ({
               name,
               in: "header",
-              description: queryType.description || undefined, // Handle undefined description
+              description: queryType?.description || undefined, // Handle undefined description
               required: true,
               schema: {
-                type: queryType.type === "number" ? "integer" : queryType.type,
-                default: queryType.default,
+                type: queryType?.type === "number" ? "integer" : queryType?.type,
+                default: queryType?.default,
               },
             } as ParameterObject)
         )
@@ -135,7 +135,7 @@ function extractPath(input: HTTPData): ParameterObject[] {
   return params;
 }
 
-function handlePropertiesObject(input: Record<string, InputType>) {
+function handlePropertiesObject<T = any>(input: DeepPartial<T>) {
   //
 
   let schemaObj: Record<string, SchemaObject> = {};
@@ -144,6 +144,10 @@ function handlePropertiesObject(input: Record<string, InputType>) {
     //
 
     const field = input[key];
+
+    if (!field) {
+      continue;
+    }
 
     const basicField = {
       type: field.type === "date" ? "string" : field.type,
@@ -156,7 +160,7 @@ function handlePropertiesObject(input: Record<string, InputType>) {
         ...schemaObj,
         [key]: {
           ...basicField,
-          properties: handlePropertiesObject(field.properties),
+          properties: handlePropertiesObject(field.properties as DeepPartial<T>),
         } as SchemaObject,
       };
       continue;
@@ -189,7 +193,7 @@ function handlePropertiesObject(input: Record<string, InputType>) {
   return schemaObj;
 }
 
-function handleResponse(input: Record<ResponseCode, ResponseType>) {
+function handleResponse<T>(input: Record<ResponseCode, ResponseType<T>>) {
   type ResponseByCode = {
     [statusCode: string]: ResponseObject;
   };

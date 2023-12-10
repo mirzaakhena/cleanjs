@@ -8,6 +8,15 @@ type Outport = {
 
 export type InportRequest = FindManyReceiptFilter & {
   // other field
+  hobbies: Hobby[];
+};
+
+type Hobby = {
+  bobo: What;
+};
+
+type What = {
+  zzzz: number;
 };
 
 export type InportResponse = InputResponseWithCount<Receipt> & {

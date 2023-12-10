@@ -40,16 +40,30 @@ export type TextAreaType = GeneralInfoType<string> & {
   textAreaLine: number;
 };
 
-export type InputType = StringType | EnumType | NumberType | BooleanType | DateType | PasswordType | TextAreaType | ObjectType | ArrayType;
+export type InputType<T = any> = StringType | EnumType | NumberType | BooleanType | DateType | PasswordType | TextAreaType | ObjectType<T> | ArrayType<T>;
 
-// export type RecordInputType = Record<string, InputType>;
+export type RecordInputType = Record<string, InputType>;
 
-export type ObjectType = GeneralInfoType<any> & {
+type ObjectType<T> = GeneralInfoType<any> & {
   type: "object";
-  properties: Record<string, InputType>;
+  properties: DeepPartial<T>;
 };
 
-export type ArrayType = GeneralInfoType<[]> & {
+export type DeepPartial<T, V = InputType<T>> = {
+  //
+  [K in keyof T]?: T[K] extends object //
+    ? T[K] extends Array<any> //
+      ? ArrayType<T[K][number]> //
+      : ObjectType<T[K]> //
+    : V;
+};
+
+export type ShallowPartial<T, V = InputType<T>> = {
+  //
+  [K in keyof T]?: V;
+};
+
+export type ArrayType<T> = GeneralInfoType<[]> & {
   type: "array";
-  items: StringType | EnumType | NumberType | BooleanType | DateType | TextAreaType | ObjectType;
+  items: StringType | EnumType | NumberType | BooleanType | DateType | TextAreaType | ObjectType<T> | ArrayType<T>;
 };

@@ -1,15 +1,18 @@
 import { BaseEntity, Identifier } from "../../framework/repo.js";
 
-export type ApprovalStatus = "PENDING" | "APPROVED" | "REJECTED";
-export type ApprovalActionStatus = "APPROVE" | "REJECT";
+export const ApprovalStatus = ["PENDING", "APPROVED", "REJECTED"] as const;
+export const ApprovalActionStatus = ["APPROVE", "REJECT"] as const;
+
+export type ApprovalStatusType = (typeof ApprovalStatus)[number];
+export type ApprovalActionStatusType = (typeof ApprovalActionStatus)[number];
 
 export class Approval<T extends Identifier> extends BaseEntity<T> {
   //
 
-  status: ApprovalStatus;
+  status: ApprovalStatusType;
   approvalDate: Date | null;
 
-  updateStatus(now: Date, approvalActionStatus: ApprovalActionStatus) {
+  updateStatus(now: Date, approvalActionStatus: ApprovalActionStatusType) {
     //
 
     this.approvalDate = now;
@@ -19,7 +22,7 @@ export class Approval<T extends Identifier> extends BaseEntity<T> {
   }
 }
 
-export const GetApprovalStatus = (a: ApprovalActionStatus): ApprovalStatus => {
+export const GetApprovalStatus = (a: ApprovalActionStatusType): ApprovalStatusType => {
   //
   if (a === "APPROVE") {
     return "APPROVED";

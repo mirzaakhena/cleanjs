@@ -1,5 +1,5 @@
 import { BaseFindManyFilter, Identifier } from "../../framework/repo.js";
-import { Approval, ApprovalStatus } from "./approval.js";
+import { Approval, ApprovalStatusType } from "./approval.js";
 import { User, UserID } from "./user.js";
 
 export type ReceiptID = Identifier;
@@ -16,7 +16,7 @@ export type FindManyReceiptFilter = BaseFindManyFilter & {
   //
   userID: UserID;
   billNumber: string;
-  status: ApprovalStatus;
+  status: ApprovalStatusType;
 };
 
 // =============================================================================================================================

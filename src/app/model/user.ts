@@ -2,9 +2,7 @@ import { BaseEntity, BaseFindManyFilter, Identifier } from "../../framework/repo
 
 export type UserID = Identifier;
 
-export type Gender = "MALE" | "FEMALE";
-
-export type UserStatus = "ACTIVE" | "NON_ACTIVE";
+export const UserStatus = ["ACTIVE", "NON_ACTIVE"] as const;
 
 export class User extends BaseEntity<UserID> {
   //
@@ -12,7 +10,7 @@ export class User extends BaseEntity<UserID> {
   name?: string;
   createdDate?: Date;
   totalPoints?: number;
-  status?: UserStatus;
+  status: (typeof UserStatus)[number];
 
   increasePoint(point: number) {
     this.totalPoints! += point;
@@ -25,7 +23,7 @@ export class User extends BaseEntity<UserID> {
     this.totalPoints! -= point;
   }
 
-  changeStatus(userStatus: UserStatus) {
+  changeStatus(userStatus: (typeof UserStatus)[number]) {
     const statusEnum = ["ACTIVE", "NON_ACTIVE"];
     if (!statusEnum.some((status) => userStatus === status)) {
       throw new Error(`status must be one of ${statusEnum}`);
@@ -39,6 +37,6 @@ export type FindManyUserFilter = BaseFindManyFilter & {
   nameLike?: string;
   totalPointMin?: number;
   totalPointMax?: number;
-  status?: UserStatus;
+  status?: (typeof UserStatus)[number];
   ids?: string[];
 };

@@ -9,12 +9,12 @@ type Outport = {
 
 export type InportRequest = {
   userID: UserID;
-  status: UserStatus;
+  status: (typeof UserStatus)[number];
 };
 
 export type InportResponse = {
   id: UserID;
-  status: UserStatus;
+  status: (typeof UserStatus)[number];
 };
 
 export const userChangeStatus: Usecase<Outport, InportRequest, InportResponse> = {
